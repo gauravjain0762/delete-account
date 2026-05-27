@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { CheckCircle2, Clock, Phone } from "lucide-react";
+import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: "Deletion Request Received — QueueToken",
@@ -43,8 +44,8 @@ export default function ConfirmationPage() {
                 aria-hidden="true"
               />
               <p className="text-sm text-amber-800 leading-relaxed">
-                Patient records, prescriptions, and consultation history will be retained for{" "}
-                <strong>7 years</strong> as required by medical record retention regulations.
+                Patient records, prescriptions, and consultation history will be retained
+                per applicable medical record retention regulations.
               </p>
             </div>
           </div>
@@ -52,7 +53,7 @@ export default function ConfirmationPage() {
           <p className="text-xs text-gray-400 mb-5">
             Questions?{" "}
             <a
-              href="mailto:support@queuetoken.in"
+              href="mailto:queuetoken@gmail.com"
               className="text-blue-600 hover:underline focus:outline-none focus:underline"
             >
               Contact support
@@ -67,6 +68,8 @@ export default function ConfirmationPage() {
           </Link>
         </div>
       </main>
+
+      <Footer />
     </div>
   );
 }

@@ -71,7 +71,7 @@ export default function DeleteAccountForm() {
     setErrors({});
     setSendingOtp(true);
     try {
-      const res = await fetch("https://staging-api.queuetoken.in/api/auth/doctor-send-otp", {
+      const res = await fetch("https://api.queuetoken.in/api/auth/doctor-send-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phone: phone.replace(/\D/g, "") }),
@@ -103,7 +103,7 @@ export default function DeleteAccountForm() {
     setSubmitting(true);
     try {
       // Step 1: verify OTP → get token
-      const verifyRes = await fetch("https://staging-api.queuetoken.in/api/auth/doctor-verify-otp", {
+      const verifyRes = await fetch("https://api.queuetoken.in/api/auth/doctor-verify-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phone: phone.replace(/\D/g, ""), otp }),
@@ -115,7 +115,7 @@ export default function DeleteAccountForm() {
       }
 
       // Step 2: delete account using the token
-      const deleteRes = await fetch("https://staging-api.queuetoken.in/api/doctor/account", {
+      const deleteRes = await fetch("https://api.queuetoken.in/api/doctor/account", {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",

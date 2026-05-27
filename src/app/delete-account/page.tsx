@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { AlertTriangle, Shield, Trash2, Clock, Info } from "lucide-react";
+import { AlertTriangle, Shield, Trash2, Info } from "lucide-react";
 import DeleteAccountForm from "./DeleteAccountForm";
+import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: "Request Account Deletion — QueueToken",
@@ -18,15 +19,32 @@ const DELETED_ITEMS = [
   "In-app messages and draft notes",
 ];
 
-const RETAINED_ITEMS = [
-  "Patient medical records and health history",
-  "Prescriptions and medication orders",
-  "Consultation history and clinical notes",
-  "Audit logs required for regulatory compliance",
-  "Billing and payment records",
+const RETENTION_ITEMS = [
+  {
+    category: "Doctor account data",
+    period: "3 years after subscription ends, or as required by applicable regulations",
+  },
+  {
+    category: "Patient account data",
+    period: "2 years after the last appointment",
+  },
+  {
+    category: "Health and symptom information",
+    period: "1 year after the doctor-patient relationship ends",
+  },
+  {
+    category: "Identity verification documents (Aadhaar, PAN)",
+    period: "Period required by law, then securely deleted",
+  },
+  {
+    category: "Transaction records",
+    period: "7 years to comply with financial and tax regulations",
+  },
+  {
+    category: "Technical logs",
+    period: "90 days, then deleted",
+  },
 ];
-
-const RETENTION_YEARS = 7;
 
 export default function DeleteAccountPage() {
   return (
@@ -112,58 +130,40 @@ export default function DeleteAccountPage() {
           <div className="bg-blue-50 border border-blue-100 rounded-md p-3 mb-4 flex gap-2.5">
             <Info className="text-blue-600 shrink-0 mt-0.5" size={15} aria-hidden="true" />
             <p className="text-blue-800 text-xs leading-relaxed">
-              Under applicable medical record retention laws, the following data must be retained
-              for a minimum of <strong>{RETENTION_YEARS} years</strong> from the date of last
-              patient interaction, regardless of account deletion. This is required by healthcare
-              regulations to protect patient safety and continuity of care.
+              We retain different categories of data for different periods, as detailed in our
+              Privacy Policy:
             </p>
           </div>
 
-          <ul className="space-y-2.5" aria-label="Data retained per medical regulations">
-            {RETAINED_ITEMS.map((item) => (
-              <li key={item} className="flex items-start gap-2.5 text-sm text-gray-700">
+          <ul className="space-y-3" aria-label="Data retained per category">
+            {RETENTION_ITEMS.map((item) => (
+              <li key={item.category} className="flex items-start gap-2.5 text-sm text-gray-700">
                 <span
                   className="w-1.5 h-1.5 rounded-full bg-blue-400 mt-1.5 shrink-0"
                   aria-hidden="true"
                 />
-                {item}
+                <span>
+                  <strong className="text-gray-900">{item.category}:</strong> {item.period}
+                </span>
               </li>
             ))}
           </ul>
 
-          <div className="mt-4 pt-4 border-t border-gray-100 flex items-center gap-2 text-xs text-gray-500">
-            <Clock size={13} aria-hidden="true" />
-            <span>
-              Retained for <strong>{RETENTION_YEARS} years</strong> per medical record retention
-              regulations
-            </span>
-          </div>
+          <p className="mt-4 text-xs text-gray-500">
+            <Link
+              href="/privacy-policy"
+              className="text-blue-600 hover:underline focus:outline-none focus:underline"
+            >
+              See our full Privacy Policy for details.
+            </Link>
+          </p>
         </section>
 
         {/* Deletion form (client component) */}
         <DeleteAccountForm />
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-gray-200 bg-white mt-8">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-gray-500">
-          <span>
-            Need help?{" "}
-            <a
-              href="mailto:support@queuetoken.in"
-              className="text-blue-600 hover:underline focus:outline-none focus:underline"
-            >
-              support@queuetoken.in
-            </a>
-          </span>
-          <Link
-            href="/privacy-policy"
-            className="text-blue-600 hover:underline focus:outline-none focus:underline"
-          >
-            Privacy Policy
-          </Link>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
