@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36" role="img" aria-label="QueueToken Logo">
+  <rect width="36" height="36" rx="9" fill="#2563EB"/>
+  <circle cx="17" cy="16" r="7" fill="none" stroke="white" stroke-width="3"/>
+  <line x1="22" y1="21" x2="27" y2="27" stroke="white" stroke-width="3" stroke-linecap="round"/>
+</svg>
