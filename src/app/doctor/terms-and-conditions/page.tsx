@@ -3,9 +3,9 @@ import Image from "next/image";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
-  title: "Terms and Conditions | QueueToken",
+  title: "Terms and Conditions | Queue Token",
   description:
-    "Terms and Conditions for QueueToken — Smart Doctor Appointment & Queue Token Management System",
+    "Terms and Conditions for Queue Token — Smart Doctor Appointment & Queue Token Management System",
 };
 
 export default function TermsAndConditionsPage() {
@@ -22,7 +22,7 @@ export default function TermsAndConditionsPage() {
             priority
           />
           <span className="font-semibold text-gray-900 text-lg tracking-tight">
-            QueueToken
+            Queue Token
           </span>
         </div>
       </header>
@@ -66,7 +66,7 @@ export default function TermsAndConditionsPage() {
         <div className="mb-8 border-l-4 border-red-500 bg-red-50 px-5 py-4 rounded-r-lg">
           <p className="text-sm text-red-900 leading-relaxed">
             <strong>LEGALLY BINDING AGREEMENT:</strong> BY REGISTERING, DOWNLOADING, OR USING THE
-            QUEUETOKEN DOCTOR APP, YOU ENTER INTO A BINDING LEGAL CONTRACT WITH CODETOWN
+            QUEUE TOKEN DOCTOR APP, YOU ENTER INTO A BINDING LEGAL CONTRACT WITH CODETOWN
             TECHNOLOGIES &amp; BLISS TECHNOLOGIES. READ THESE TERMS CAREFULLY. IF YOU DO NOT AGREE
             TO ALL PROVISIONS, YOU MUST NOT USE THE DOCTOR APP. IGNORANCE OF THESE TERMS WILL NOT
             CONSTITUTE A DEFENCE IN ANY LEGAL PROCEEDING.
@@ -84,9 +84,9 @@ export default function TermsAndConditionsPage() {
           <ul>
             <li>
               <strong>
-                &ldquo;QueueToken&rdquo; / &ldquo;Platform&rdquo; / &ldquo;Doctor App&rdquo;
+                &ldquo;Queue Token&rdquo; / &ldquo;Platform&rdquo; / &ldquo;Doctor App&rdquo;
               </strong>{" "}
-              &mdash; the QueueToken Doctor mobile application, backend system, and all related
+              &mdash; the Queue Token Doctor mobile application, backend system, and all related
               services operated by Codetown Technologies &amp; Bliss Technologies.
             </li>
             <li>
@@ -106,7 +106,7 @@ export default function TermsAndConditionsPage() {
             </li>
             <li>
               <strong>&ldquo;Patient User&rdquo;</strong> &mdash; any patient who uses the
-              QueueToken Patient App to book appointments at registered clinics.
+              Queue Token Patient App to book appointments at registered clinics.
             </li>
             <li>
               <strong>&ldquo;Services&rdquo;</strong> &mdash; all features provided by the Doctor
@@ -205,7 +205,7 @@ export default function TermsAndConditionsPage() {
             3. Nature of the Platform &mdash; Intermediary Status
           </h2>
           <p>
-            <strong>CRITICAL:</strong> QueueToken is a <strong>TECHNOLOGY PLATFORM</strong> and{" "}
+            <strong>CRITICAL:</strong> Queue Token is a <strong>TECHNOLOGY PLATFORM</strong> and{" "}
             <strong>INTERMEDIARY</strong> under Section 2(1)(w) of the Information Technology Act,
             2000 and the IT (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021. The
             Company does <strong>NOT</strong> practice medicine, does <strong>NOT</strong> provide
@@ -432,7 +432,7 @@ export default function TermsAndConditionsPage() {
           {/* Section 7 */}
           <h2 id="intellectual-property">7. Intellectual Property</h2>
           <p>
-            All intellectual property in the QueueToken Platform &mdash; including software, source
+            All intellectual property in the Queue Token Platform &mdash; including software, source
             code, user interface, logo, trade marks, and content &mdash; is the exclusive property
             of Codetown Technologies &amp; Bliss Technologies or its licensors. You are granted a
             limited, non-exclusive, non-transferable, revocable licence to use the Doctor App solely

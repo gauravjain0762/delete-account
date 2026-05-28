@@ -3,9 +3,9 @@ import Image from "next/image";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | QueueToken Patient",
+  title: "Privacy Policy | Queue Token Patient",
   description:
-    "Privacy Policy for QueueToken Patient App — Smart Doctor Appointment & Queue Token Management System",
+    "Privacy Policy for Queue Token Patient App — Smart Doctor Appointment & Queue Token Management System",
 };
 
 export default function PatientPrivacyPolicyPage() {
@@ -22,7 +22,7 @@ export default function PatientPrivacyPolicyPage() {
             priority
           />
           <span className="font-semibold text-gray-900 text-lg tracking-tight">
-            QueueToken
+            Queue Token
           </span>
         </div>
       </header>
@@ -66,7 +66,7 @@ export default function PatientPrivacyPolicyPage() {
         <div className="mb-8 border-l-4 border-blue-500 bg-blue-50 px-5 py-4 rounded-r-lg">
           <p className="text-sm text-blue-900 leading-relaxed">
             <strong>IMPORTANT:</strong> By downloading, installing, registering on, or using the
-            QueueToken Patient App, you as a Patient User expressly acknowledge that you have read,
+            Queue Token Patient App, you as a Patient User expressly acknowledge that you have read,
             understood, and consent to this Privacy Policy. If you do not agree, please do not use
             the application. Continued use constitutes binding consent.
           </p>
@@ -78,7 +78,7 @@ export default function PatientPrivacyPolicyPage() {
           {/* Section 1 */}
           <h2 id="about-us">1. About Us and Scope</h2>
           <p>
-            QueueToken Patient App is operated by Codetown Technologies &amp; Bliss Technologies
+            Queue Token Patient App is operated by Codetown Technologies &amp; Bliss Technologies
             (&ldquo;Company&rdquo;, &ldquo;we&rdquo;, &ldquo;us&rdquo;, &ldquo;our&rdquo;). The
             Patient App is a free mobile application that allows patients to find registered
             clinics, book appointments, receive real-time queue tokens, and track estimated visit

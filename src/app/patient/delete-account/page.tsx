@@ -6,9 +6,9 @@ import PatientDeleteForm from "@/components/PatientDeleteForm";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
-  title: "Request Account Deletion — QueueToken Patient",
+  title: "Request Account Deletion — Queue Token Patient",
   description:
-    "Permanently delete your QueueToken patient account. Appointment records are retained per applicable regulations.",
+    "Permanently delete your Queue Token patient account. Appointment records are retained per applicable regulations.",
 };
 
 const DELETED_ITEMS = [
@@ -48,7 +48,7 @@ export default function PatientDeleteAccountPage() {
             priority
           />
           <span className="font-semibold text-gray-900 text-lg tracking-tight">
-            QueueToken
+            Queue Token
           </span>
         </div>
       </header>
@@ -59,7 +59,7 @@ export default function PatientDeleteAccountPage() {
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Request Account Deletion</h1>
           <p className="mt-1 text-gray-500 text-sm">
-            Permanently delete your QueueToken patient account and associated personal data.
+            Permanently delete your Queue Token patient account and associated personal data.
           </p>
         </div>
 

@@ -3,9 +3,9 @@ import Image from "next/image";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
-  title: "Terms and Conditions | QueueToken Patient",
+  title: "Terms and Conditions | Queue Token Patient",
   description:
-    "Terms and Conditions for QueueToken Patient App — Smart Doctor Appointment & Queue Token Management System",
+    "Terms and Conditions for Queue Token Patient App — Smart Doctor Appointment & Queue Token Management System",
 };
 
 export default function PatientTermsAndConditionsPage() {
@@ -22,7 +22,7 @@ export default function PatientTermsAndConditionsPage() {
             priority
           />
           <span className="font-semibold text-gray-900 text-lg tracking-tight">
-            QueueToken
+            Queue Token
           </span>
         </div>
       </header>
@@ -66,7 +66,7 @@ export default function PatientTermsAndConditionsPage() {
         <div className="mb-8 border-l-4 border-blue-500 bg-blue-50 px-5 py-4 rounded-r-lg">
           <p className="text-sm text-blue-900 leading-relaxed">
             <strong>LEGALLY BINDING AGREEMENT:</strong> BY REGISTERING, DOWNLOADING, OR USING THE
-            QUEUETOKEN PATIENT APP, YOU ENTER INTO A BINDING LEGAL CONTRACT WITH CODETOWN
+            QUEUE TOKEN PATIENT APP, YOU ENTER INTO A BINDING LEGAL CONTRACT WITH CODETOWN
             TECHNOLOGIES &amp; BLISS TECHNOLOGIES. READ THESE TERMS CAREFULLY. IF YOU DO NOT
             AGREE, DO NOT USE THE APP. YOUR USE OF THE APP CONSTITUTES YOUR ACCEPTANCE OF THESE
             TERMS.
@@ -81,9 +81,9 @@ export default function PatientTermsAndConditionsPage() {
           <ul>
             <li>
               <strong>
-                &ldquo;QueueToken&rdquo; / &ldquo;Platform&rdquo; / &ldquo;Patient App&rdquo;
+                &ldquo;Queue Token&rdquo; / &ldquo;Platform&rdquo; / &ldquo;Patient App&rdquo;
               </strong>{" "}
-              &mdash; the QueueToken Patient mobile application operated by Codetown Technologies
+              &mdash; the Queue Token Patient mobile application operated by Codetown Technologies
               and Bliss Technologies
             </li>
             <li>
@@ -101,7 +101,7 @@ export default function PatientTermsAndConditionsPage() {
             </li>
             <li>
               <strong>&ldquo;Doctor User&rdquo;</strong> - a registered medical practitioner or
-              clinic who uses the QueueToken Doctor App.
+              clinic who uses the Queue Token Doctor App.
             </li>
             <li>
               <strong>&ldquo;Appointment&rdquo;</strong> - a medical consultation booking made by
@@ -145,7 +145,7 @@ export default function PatientTermsAndConditionsPage() {
           </h2>
           <p>
             <strong>
-              QUEUETOKEN IS A TECHNOLOGY SCHEDULING PLATFORM ONLY. IT IS NOT A HEALTHCARE
+              QUEUE TOKEN IS A TECHNOLOGY SCHEDULING PLATFORM ONLY. IT IS NOT A HEALTHCARE
               PROVIDER, MEDICAL PRACTICE, HOSPITAL, OR HEALTH INFORMATION SERVICE. THE COMPANY
               DOES NOT PROVIDE MEDICAL ADVICE, DIAGNOSIS, TREATMENT, OR MEDICAL CONSULTATION OF
               ANY KIND. ALL MEDICAL SERVICES ARE PROVIDED EXCLUSIVELY BY THE INDEPENDENT DOCTOR

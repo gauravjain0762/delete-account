@@ -3,9 +3,9 @@ import Image from "next/image";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | QueueToken",
+  title: "Privacy Policy | Queue Token",
   description:
-    "Privacy Policy for QueueToken — Smart Doctor Appointment & Queue Token Management System",
+    "Privacy Policy for Queue Token — Smart Doctor Appointment & Queue Token Management System",
 };
 
 export default function PrivacyPolicyPage() {
@@ -22,7 +22,7 @@ export default function PrivacyPolicyPage() {
             priority
           />
           <span className="font-semibold text-gray-900 text-lg tracking-tight">
-            QueueToken
+            Queue Token
           </span>
         </div>
       </header>
