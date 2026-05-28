@@ -129,7 +129,7 @@ export default function DeleteAccountForm() {
         return;
       }
 
-      router.push("/delete-account/confirmation");
+      router.push("/doctor/delete-account/confirmation");
     } catch {
       setErrors({ general: "Network error. Please check your connection and try again." });
     } finally {

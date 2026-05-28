@@ -2,7 +2,11 @@
   "permissions": {
     "allow": [
       "Bash(npm run *)",
-      "Bash(npm install *)"
+      "Bash(npm install *)",
+      "Bash(Remove-Item -Path \"f:\\\\company\\\\hospital-admin ui\\\\landing page\\\\account-deletion-portal\\\\src\\\\app\\\\privacy-policy\\\\page.tsx\" -Force)",
+      "Bash(Remove-Item -Path \"f:\\\\company\\\\hospital-admin ui\\\\landing page\\\\account-deletion-portal\\\\src\\\\app\\\\privacy-policy\" -Force)",
+      "Bash(Remove-Item -Path \"f:\\\\company\\\\hospital-admin ui\\\\landing page\\\\account-deletion-portal\\\\src\\\\app\\\\terms-and-conditions\\\\page.tsx\" -Force)",
+      "Bash(Remove-Item -Path \"f:\\\\company\\\\hospital-admin ui\\\\landing page\\\\account-deletion-portal\\\\src\\\\app\\\\terms-and-conditions\" -Force)"
     ]
   }
 }

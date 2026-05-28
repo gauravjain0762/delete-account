@@ -10,19 +10,19 @@ export default function Footer() {
           className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm"
         >
           <Link
-            href="/delete-account"
+            href="/doctor/delete-account"
             className="text-blue-600 hover:underline focus:outline-none focus:underline"
           >
             Delete Account
           </Link>
           <Link
-            href="/privacy-policy"
+            href="/doctor/privacy-policy"
             className="text-blue-600 hover:underline focus:outline-none focus:underline"
           >
             Privacy Policy
           </Link>
           <Link
-            href="/terms-and-conditions"
+            href="/doctor/terms-and-conditions"
             className="text-blue-600 hover:underline focus:outline-none focus:underline"
           >
             Terms &amp; Conditions
