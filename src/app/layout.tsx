@@ -8,9 +8,9 @@ const geistSans = Geist({
 });
 
 export const metadata: Metadata = {
-  title: "Account Deletion — QueueToken",
+  title: "Account Deletion — Queue Token",
   description:
-    "Request permanent deletion of your QueueToken doctor account and associated personal data.",
+    "Request permanent deletion of your Queue Token doctor account and associated personal data.",
 };
 
 export default function RootLayout({
