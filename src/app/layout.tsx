@@ -17,9 +17,29 @@ const plusJakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "QueueToken",
-  description:
-    "Request permanent deletion of your Queue Token doctor account and associated personal data.",
+  title: "QueueToken — Smart Queue Management for Clinics",
+  description: "Patient & Doctor Management System",
+  openGraph: {
+    title: "QueueToken — Smart Queue Management for Clinics",
+    description: "Patient & Doctor Management System",
+    url: "https://queuetoken.in",
+    siteName: "QueueToken",
+    images: [
+      {
+        url: "https://queuetoken.in/queuetoken-logo.png",
+        width: 512,
+        height: 512,
+        alt: "QueueToken Logo",
+      },
+    ],
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "QueueToken — Smart Queue Management for Clinics",
+    description: "Patient & Doctor Management System",
+    images: ["https://queuetoken.in/queuetoken-logo.png"],
+  },
 };
 
 export default function RootLayout({
