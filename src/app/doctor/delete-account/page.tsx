@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { AlertTriangle, Shield, Trash2, Info } from "lucide-react";
+import Header from "@/components/Header";
 import DeleteAccountForm from "./DeleteAccountForm";
 import Footer from "@/components/Footer";
 
@@ -48,22 +48,8 @@ const RETENTION_ITEMS = [
 
 export default function DeleteAccountPage() {
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 py-4 flex items-center gap-3">
-          <Image
-            src="https://res.cloudinary.com/dbazlbkfj/image/upload/v1779962175/WhatsApp_Image_2026-05-28_at_3.12.36_PM_wa8gw9.jpg"
-            alt="QueueToken logo"
-            width={48}
-            height={48}
-            priority
-          />
-          <span className="font-semibold text-gray-900 text-lg tracking-tight">
-            Queue Token
-          </span>
-        </div>
-      </header>
+    <div className="min-h-screen flex flex-col bg-[#FDF8F6]">
+      <Header />
 
       {/* Main content */}
       <main className="flex-1 max-w-3xl mx-auto w-full px-4 sm:px-6 py-8 space-y-6">
@@ -152,7 +138,7 @@ export default function DeleteAccountPage() {
           <p className="mt-4 text-xs text-gray-500">
             <Link
               href="/doctor/privacy-policy"
-              className="text-blue-600 hover:underline focus:outline-none focus:underline"
+              className="text-[#E8192C] hover:underline focus:outline-none focus:underline"
             >
               See our full Privacy Policy for details.
             </Link>

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { CheckCircle2, Clock, Phone } from "lucide-react";
+import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
@@ -11,7 +12,8 @@ export const metadata: Metadata = {
 
 export default function ConfirmationPage() {
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-[#FDF8F6]">
+      <Header />
       <main className="flex-1 flex items-center justify-center px-4 py-12">
         <div className="max-w-md w-full bg-white rounded-xl border border-gray-200 shadow-sm p-8 text-center">
           <div className="flex justify-center mb-5" aria-hidden="true">
@@ -54,7 +56,7 @@ export default function ConfirmationPage() {
             Questions?{" "}
             <a
               href="mailto:queuetoken@gmail.com"
-              className="text-blue-600 hover:underline focus:outline-none focus:underline"
+              className="text-[#E8192C] hover:underline focus:outline-none focus:underline"
             >
               Contact support
             </a>
@@ -62,7 +64,7 @@ export default function ConfirmationPage() {
 
           <Link
             href="/"
-            className="text-sm text-gray-500 hover:text-gray-700 underline underline-offset-2 focus:outline-none"
+            className="text-sm text-[#E8192C] hover:opacity-80 underline underline-offset-2 focus:outline-none"
           >
             Return to home
           </Link>

@@ -2,8 +2,9 @@
 @plugin "@tailwindcss/typography";
 
 :root {
-  --background: #ffffff;
+  --background: #FDF8F6;
   --foreground: #111111;
+  --brand-red: #E8192C;
 }
 
 @theme inline {
@@ -18,4 +19,19 @@ body {
   font-family: var(--font-inter), 'Inter', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-jakarta), 'Plus Jakarta Sans', sans-serif;
+  letter-spacing: -0.02em;
+}
+
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4,
+.prose h5,
+.prose h6 {
+  font-family: var(--font-jakarta), 'Plus Jakarta Sans', sans-serif;
+  letter-spacing: -0.02em;
 }

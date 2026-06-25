@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Image from "next/image";
+import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
@@ -10,22 +10,8 @@ export const metadata: Metadata = {
 
 export default function TermsAndConditionsPage() {
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 py-4 flex items-center gap-3">
-          <Image
-            src="https://res.cloudinary.com/dbazlbkfj/image/upload/v1779962175/WhatsApp_Image_2026-05-28_at_3.12.36_PM_wa8gw9.jpg"
-            alt="QueueToken logo"
-            width={48}
-            height={48}
-            priority
-          />
-          <span className="font-semibold text-gray-900 text-lg tracking-tight">
-            Queue Token
-          </span>
-        </div>
-      </header>
+    <div className="min-h-screen flex flex-col bg-[#FDF8F6]">
+      <Header />
 
       <main className="flex-1 max-w-3xl mx-auto w-full px-4 sm:px-6 py-8 sm:py-12">
         {/* Page header */}
@@ -51,7 +37,7 @@ export default function TermsAndConditionsPage() {
               <dd className="inline">
                 <a
                   href="https://queuetoken.in"
-                  className="text-blue-600 hover:underline"
+                  className="text-[#E8192C] hover:underline"
                   target="_blank"
                   rel="noopener noreferrer"
                 >

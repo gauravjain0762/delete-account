@@ -194,7 +194,7 @@ export default function DeleteAccountForm() {
                   aria-required="true"
                   aria-describedby={errors.phone ? `${phoneId}-error` : undefined}
                   aria-invalid={!!errors.phone}
-                  className={`w-full pl-9 pr-3 py-2 border rounded-r-md text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
+                  className={`w-full pl-9 pr-3 py-2 border rounded-r-md text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#E8192C] transition-colors ${
                     errors.phone ? "border-red-400 bg-red-50" : "border-gray-300 bg-white"
                   }`}
                   placeholder="9876543210"
@@ -215,7 +215,7 @@ export default function DeleteAccountForm() {
           <button
             type="submit"
             disabled={sendingOtp}
-            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-md text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-md text-sm font-semibold text-white bg-[#FB2C36] hover:bg-[#FF4855] active:bg-[#D91E2A] focus:outline-none focus:ring-2 focus:ring-[#FB2C36] focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {sendingOtp ? (
               <>
@@ -250,7 +250,7 @@ export default function DeleteAccountForm() {
             setStep(1);
             setErrors({});
           }}
-          className="text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded p-0.5"
+          className="text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-[#E8192C] rounded p-0.5"
           aria-label="Back to phone number entry"
         >
           <ArrowLeft size={18} />
@@ -316,7 +316,7 @@ export default function DeleteAccountForm() {
             autoComplete="one-time-code"
             autoFocus
             spellCheck={false}
-            className={`w-full px-3 py-2 border rounded-md text-sm text-gray-900 font-mono tracking-[0.35em] focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
+            className={`w-full px-3 py-2 border rounded-md text-sm text-gray-900 font-mono tracking-[0.35em] focus:outline-none focus:ring-2 focus:ring-[#E8192C] transition-colors ${
               errors.otp
                 ? "border-red-400 bg-red-50"
                 : otp.length === 6
@@ -350,13 +350,13 @@ export default function DeleteAccountForm() {
             rows={3}
             value={reason}
             onChange={(e) => setReason(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none transition-colors"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-[#E8192C] resize-none transition-colors"
             placeholder="Tell us why you're deleting your account (optional)"
           />
         </div>
 
         {/* Acknowledgement checkbox */}
-        <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-md border border-gray-200">
+        <div className="flex items-start gap-3 p-4 bg-[#FDF8F6] rounded-md border border-gray-200">
           <input
             id={acknowledgeId}
             type="checkbox"

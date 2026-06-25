@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="border-t border-gray-200 bg-white mt-8">
+    <footer className="border-t border-black/[0.07] bg-white mt-8">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6 space-y-4">
         {/* Nav links */}
         <nav
@@ -11,25 +11,25 @@ export default function Footer() {
         >
           <Link
             href="/doctor/delete-account"
-            className="text-blue-600 hover:underline focus:outline-none focus:underline"
+            className="text-[#E8192C] hover:underline focus:outline-none focus:underline font-medium"
           >
             Delete Account
           </Link>
           <Link
             href="/doctor/privacy-policy"
-            className="text-blue-600 hover:underline focus:outline-none focus:underline"
+            className="text-[#E8192C] hover:underline focus:outline-none focus:underline font-medium"
           >
             Privacy Policy
           </Link>
           <Link
             href="/doctor/terms-and-conditions"
-            className="text-blue-600 hover:underline focus:outline-none focus:underline"
+            className="text-[#E8192C] hover:underline focus:outline-none focus:underline font-medium"
           >
             Terms &amp; Conditions
           </Link>
           <a
             href="mailto:queuetoken@gmail.com"
-            className="text-blue-600 hover:underline focus:outline-none focus:underline"
+            className="text-[#E8192C] hover:underline focus:outline-none focus:underline font-medium"
           >
             Support: queuetoken@gmail.com
           </a>
@@ -40,7 +40,7 @@ export default function Footer() {
           Phone:{" "}
           <a
             href="tel:+919509647637"
-            className="text-blue-600 hover:underline focus:outline-none focus:underline"
+            className="text-[#E8192C] hover:underline focus:outline-none focus:underline font-medium"
           >
             +91 95096 47637
           </a>

@@ -211,7 +211,9 @@ export default function HomePage() {
                   <div className="hero-cta-block">
                     <div className="hero-cta-label">Looking to book an appointment?</div>
                     <a
-                      href="#download"
+                      href="https://play.google.com/store/apps/details?id=app.queuetoken&pcampaignid=web_share"
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="btn btn-ghost btn-lg"
                       style={{ width: "100%", justifyContent: "center" }}
                     >
@@ -285,6 +287,30 @@ export default function HomePage() {
             </div>
           </div>
         </section>
+
+        {/* SOCIAL PROOF BAR */}
+        <div className="social-proof-bar" aria-label="Key metrics">
+          <div className="lp-container">
+            <div className="social-proof-inner">
+              <div className="social-proof-item">
+                <span className="proof-num">500+</span>
+                <span className="proof-label">Clinics</span>
+              </div>
+              <div className="social-proof-item">
+                <span className="proof-num">1,00,000+</span>
+                <span className="proof-label">Patients</span>
+              </div>
+              <div className="social-proof-item">
+                <span className="proof-num">20+</span>
+                <span className="proof-label">Cities</span>
+              </div>
+              <div className="social-proof-item">
+                <span className="proof-num">₹0</span>
+                <span className="proof-label">Setup Fee</span>
+              </div>
+            </div>
+          </div>
+        </div>
 
         {/* MARQUEE */}
         <div className="marquee-band" aria-hidden="true">
@@ -671,7 +697,7 @@ export default function HomePage() {
               <div className="reveal" style={{ transitionDelay: ".1s" }}>
                 <div className="section-label">Patient Experience</div>
                 <h2 className="section-title" id="patient-features-heading">
-                  From &ldquo;I need a doctor&rdquo; to Token #2<br />in under 60 seconds
+                  From &ldquo;I need a doctor&rdquo; to <span style={{ color: "var(--red)" }}>Token #2</span> in<br />under 60 seconds
                 </h2>
                 <p className="section-subtitle" style={{ marginBottom: 36 }}>
                   The Patient App is free, fast, and designed for anyone — no tech experience needed. Experience clinic visits without the wait.
@@ -679,13 +705,13 @@ export default function HomePage() {
                 <div className="pf-feat-list">
                   {([
                     {
-                      bg: "#F1F5F9", color: "#64748B",
+                      bg: "#EEF2FF", color: "#6366F1",
                       svg: <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>,
                       title: "Find Clinic Instantly, Manage Past Sessions",
                       desc: "Shows every registered clinic. Shows clinics the patient has visited before.",
                     },
                     {
-                      bg: "#EFF6FF", color: "#3B82F6",
+                      bg: "rgba(251,44,54,0.09)", color: "#FB2C36",
                       svg: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="20" height="20"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>,
                       title: "Real-Time Queue Token",
                       desc: "See the live queue, current token, and estimated waiting time in real time.",
@@ -792,7 +818,7 @@ export default function HomePage() {
                   aria-selected={journeyTab === "doctor"}
                   onClick={() => setJourneyTab("doctor")}
                 >
-                  <span>🩺</span> Doctors
+                  Doctors
                 </button>
                 <button
                   className={`journey-tab-btn${journeyTab === "patient" ? " active" : ""}`}
@@ -800,7 +826,7 @@ export default function HomePage() {
                   aria-selected={journeyTab === "patient"}
                   onClick={() => setJourneyTab("patient")}
                 >
-                  <span>👤</span> Patients
+                  Patients
                 </button>
                 <div
                   className="journey-tab-thumb"
@@ -1003,7 +1029,7 @@ export default function HomePage() {
               </div>
 
               <div style={{ textAlign: "center", marginTop: 64 }}>
-                <a href="#download" className="btn btn-primary btn-lg">Download Patient App — Free</a>
+                <a href="https://play.google.com/store/apps/details?id=app.queuetoken&pcampaignid=web_share" target="_blank" rel="noopener noreferrer" className="btn btn-primary btn-lg">Download Patient App — Free</a>
               </div>
             </div>
 
@@ -1218,7 +1244,7 @@ export default function HomePage() {
                     ))}
                   </div>
                   <div className="dl-store-btns">
-                    <a href="#" className="dl-store-badge" aria-label="Download Doctor App on Google Play">
+                    <a href="https://play.google.com/store/apps/details?id=app.queuetoken.doctors&pcampaignid=web_share" target="_blank" rel="noopener noreferrer" className="dl-store-badge" aria-label="Download Doctor App on Google Play">
                       <div className="dl-store-badge-icon">{GOOGLE_PLAY_SVG}</div>
                       <div className="dl-store-badge-text">
                         <div className="dl-store-badge-label">Get it on</div>
@@ -1244,7 +1270,7 @@ export default function HomePage() {
                     ))}
                   </div>
                   <div className="dl-store-btns">
-                    <a href="#" className="dl-store-badge" aria-label="Download Patient App on Google Play">
+                    <a href="https://play.google.com/store/apps/details?id=app.queuetoken&pcampaignid=web_share" target="_blank" rel="noopener noreferrer" className="dl-store-badge" aria-label="Download Patient App on Google Play">
                       <div className="dl-store-badge-icon">{GOOGLE_PLAY_SVG}</div>
                       <div className="dl-store-badge-text">
                         <div className="dl-store-badge-label">Get it on</div>
@@ -1295,6 +1321,22 @@ export default function HomePage() {
                       <div className="channel-label">Support Hours</div>
                       <div className="channel-value">9 AM – 9 PM · Mon to Sat</div>
                     </div>
+                  </div>
+                </div>
+                <div className="contact-trust">
+                  <div className="contact-trust-item">
+                    <span className="contact-trust-num">200+</span>
+                    <span className="contact-trust-lbl">Clinics Onboarded</span>
+                  </div>
+                  <div className="contact-trust-divider" />
+                  <div className="contact-trust-item">
+                    <span className="contact-trust-num">&lt;&nbsp;2 hrs</span>
+                    <span className="contact-trust-lbl">Avg. Response</span>
+                  </div>
+                  <div className="contact-trust-divider" />
+                  <div className="contact-trust-item">
+                    <span className="contact-trust-num">4.8 ★</span>
+                    <span className="contact-trust-lbl">Doctor Rating</span>
                   </div>
                 </div>
               </div>
