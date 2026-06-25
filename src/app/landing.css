@@ -6,6 +6,7 @@
   color: #111111;
   overflow-x: hidden;
   line-height: 1.6;
+  scroll-behavior: smooth;
   user-select: none;
   -webkit-user-select: none;
 }
@@ -243,6 +244,10 @@
   transition: all .3s;
 }
 
+@media (max-width: 768px) {
+  .hamburger span { background: var(--red); }
+}
+
 .mobile-menu {
   display: none;
   position: fixed;
@@ -260,6 +265,7 @@
 
 .mobile-menu.open { display: flex; }
 .mobile-menu a { font-family: var(--font-d); font-size: 1.4rem; font-weight: 600; color: var(--text-1); }
+.mobile-menu a.btn-primary { color: #fff; }
 
 /* Hero */
 #hero { padding-top: 120px; padding-bottom: 80px; position: relative; overflow: hidden; background: var(--bg); }
@@ -2414,4 +2420,238 @@
   .pricing-amount { font-size: 2.4rem; }
   .pf-standards { padding: 28px 20px; }
   .contact-form { padding: 28px 20px; }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   MOBILE RESPONSIVE — additions only, desktop styles untouched
+════════════════════════════════════════════════════════════════ */
+
+/* ── ≤ 1024px: onboarding sticky fix only ─────────────────── */
+@media (max-width: 1024px) {
+  /* Onboarding — remove sticky when layout is single column */
+  .onboarding-visual { position: static; top: auto; }
+
+  /* Hero — keep left-aligned, just ensure full width */
+  .hero-desc { max-width: 100%; }
+  .hero-dual-cta { max-width: 100%; }
+}
+
+/* ── ≤ 768px: main mobile fixes ───────────────────────────── */
+@media (max-width: 768px) {
+  /* Container */
+  .lp-container { padding: 0 18px; }
+
+  /* Section padding already 76px — tighten headings */
+  .section-title { margin-bottom: 12px; }
+  .section-subtitle { font-size: .95rem; }
+
+  /* ── Hero — center-align everything on mobile ── */
+  #hero { padding-top: 96px; padding-bottom: 56px; }
+  #hero .hero-grid { text-align: center; }
+  .hero-content { text-align: center; }
+  .hero-badge { margin-left: auto; margin-right: auto; }
+  .hero-title { margin-bottom: 20px; text-align: center; }
+  .hero-desc { max-width: 100%; margin-left: auto; margin-right: auto; margin-bottom: 32px; text-align: center; }
+  .hero-dual-cta { align-items: center; max-width: 100%; }
+  .hero-cta-label { text-align: center; }
+  .hero-cta-block { text-align: center; width: 100%; }
+  .hero-divider { width: 100%; }
+  .hero-cta-row { width: 100%; }
+
+  /* Hero CTA buttons — full width when stacked */
+  .hero-cta-row .btn { width: 100%; justify-content: center; }
+  .hero-cta-block { width: 100%; }
+
+  /* ── Remove all heavy animations on mobile ── */
+  /* Particles */
+  .hero-particle-1, .hero-particle-2, .hero-particle-3,
+  .hero-particle-4, .hero-particle-5 { display: none; }
+  /* Orbs */
+  .hero-glow-1, .hero-glow-2, .hero-glow-3 { animation: none; }
+  /* Hero entrance animations — show instantly */
+  .hero-badge, .hero-title, .hero-desc,
+  .hero-dual-cta, .hero-stats, .hero-phones { animation: none; opacity: 1; transform: none; }
+  /* Marquee */
+  .marquee-track { animation-duration: 60s; }
+  /* Reveal scroll animations — instant on mobile */
+  .reveal { opacity: 1; transform: none; transition: none; }
+  .reveal.visible { opacity: 1; transform: none; }
+  /* Section slide-in animations */
+  .pf-feat { animation: none; opacity: 1; transform: none; }
+  .pf-hero-grid > .reveal.visible { animation: none !important; transform: none !important; }
+  .patient-phones.visible { animation: none !important; }
+  .sol-card-left, .sol-card-right { animation: none; opacity: 1; transform: none; }
+  .hiw-step-card, .pj-step-num, .pj-step, .why-stat,
+  .pricing-card, .onb-card, .df-stat-row { animation: none; opacity: 1; transform: none; }
+  /* Float animations */
+  .patient-phone.back, .patient-phone.front { animation: none; }
+  .phone-frame.front, .phone-frame.back { animation: none; }
+  /* Connector pulse */
+  .connector-icon { animation: none; }
+  /* Token pulse */
+  .token-number { animation: none; }
+  /* HIW rings */
+  .hiw-step-ring, .hiw-step-ring-2 { animation: none; }
+  /* Form shimmer */
+  .contact-form::before { animation: none; }
+
+  #patient-features { overflow: hidden; }
+
+  /* Problem — center "For Doctors & Clinics" / "For Patients" pills */
+  .problem-side-label { justify-content: center; }
+
+  /* Solution connector — horizontal between stacked cards */
+  .solution-connector { flex-direction: row; justify-content: center; }
+  .connector-line { width: 40px; height: 2px; }
+
+  /* Patient features stats row — wrap, remove dividers */
+  .pf-stats-row { flex-wrap: wrap; gap: 24px; }
+  .pf-stat-divider { display: none; }
+  .pf-stat-num { font-size: 1.8rem; }
+
+  /* Patient journey steps — compact */
+  .pj-step { padding: 36px 0; }
+  .pj-content { padding: 22px 20px; }
+  .pj-mock { max-width: 100%; padding: 18px; }
+
+  /* Patient journey line — force visible on mobile (no hover on touch) */
+  .pj-steps-list::before { transform: scaleY(1) !important; }
+
+  /* EST WAIT token row — prevent overflow on narrow screens */
+  .pf-clinic-token-row { gap: 4px; padding: 10px 8px; align-items: end; }
+  .pf-clinic-token-label {
+    font-size: .55rem;
+    letter-spacing: .02em;
+    min-height: 2.4em;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    text-align: center;
+  }
+  .pf-clinic-token { font-size: 1.15rem; }
+
+  /* Why Us — comparison table scroll on narrow screens */
+  .comparison-table { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .comp-header, .comp-row { min-width: 380px; }
+
+  /* Why stats — already 2col, fine on mobile */
+  .why-stat { padding: 16px; }
+
+  /* Contact */
+  .contact-info { padding-right: 0; }
+  .contact-grid { gap: 36px; }
+
+  /* Download card */
+  .dl-card { padding: 24px 20px; }
+  .dl-store-badge { padding: 12px 16px; gap: 10px; }
+
+  /* Journey tab switcher — full width */
+  .journey-tab-track { width: 100%; }
+  .journey-tab-btn { flex: 1; justify-content: center; padding: 11px 16px; font-size: .84rem; }
+
+  /* HIW tab switcher — full width */
+  .hiw-switcher-track { width: 100%; }
+  .hiw-switcher-btn { flex: 1; justify-content: center; padding: 11px 14px; }
+
+  /* Marquee band */
+  .marquee-item { padding: 0 18px; font-size: .74rem; }
+
+  /* Footer */
+  .footer-brand-desc { max-width: 100%; }
+}
+
+/* ── ≤ 480px: small phones ────────────────────────────────── */
+@media (max-width: 480px) {
+  .lp-container { padding: 0 16px; }
+  .landing-page section { padding: 60px 0; }
+  #hero { padding-top: 88px; padding-bottom: 52px; }
+
+  /* Typography */
+  .landing-page h2 { font-size: clamp(1.55rem, 6.5vw, 2.4rem); }
+  .landing-page h3 { font-size: clamp(1rem, 4.5vw, 1.3rem); }
+
+  /* HIW — single column on small phones */
+  .hiw-grid { grid-template-columns: 1fr; gap: 20px; }
+  .hiw-step-card { padding: 0 8px 24px; text-align: left; display: grid; grid-template-columns: auto 1fr; gap: 0 18px; align-items: start; }
+  .hiw-step-num-wrap { width: 52px; height: 52px; margin: 0; }
+  .hiw-step-icon { margin-bottom: 8px; font-size: 20px; }
+
+  /* HIW tab switcher — shrink text */
+  .hiw-switcher-btn { font-size: .76rem; padding: 10px 10px; gap: 5px; }
+  .journey-tab-btn { font-size: .80rem; padding: 10px 12px; gap: 5px; }
+
+  /* Solution connector */
+  .connector-icon { width: 42px; height: 42px; font-size: 17px; }
+
+  /* Doctor features */
+  .df-card { padding: 22px 18px 16px; }
+  .df-icon { width: 44px; height: 44px; }
+
+  /* Patient features */
+  .pf-feat { padding: 14px 14px; gap: 12px; }
+  .pf-feat-icon-box { width: 36px; height: 36px; }
+  .pf-standards { padding: 24px 18px; }
+  .pf-stat-num { font-size: 1.6rem; }
+
+  /* Patient journey */
+  .pj-step { grid-template-columns: 40px 1fr; gap: 0 14px; padding: 28px 0; }
+  .pj-step-num { width: 40px; height: 40px; font-size: .88rem; }
+  .pj-steps-list::before { left: 19px; }
+  .pj-step-title { font-size: clamp(1.1rem, 5vw, 1.5rem); }
+
+  /* Onboarding cards */
+  .onb-card { padding: 16px 16px 16px 14px; gap: 14px; }
+
+  /* Why Us comparison */
+  .comp-header-cell { font-size: .62rem; padding: 10px 8px; letter-spacing: .04em; }
+  .comp-cell { font-size: .77rem; padding: 10px 8px; }
+  .comp-header, .comp-row { min-width: 320px; }
+
+  /* Why stats */
+  .why-stat { padding: 14px 12px; }
+  .why-stat-num { font-size: 1.65rem; }
+
+  /* Pricing */
+  .pricing-card { padding: 28px 20px; }
+  .pricing-amount { font-size: 2.6rem; }
+  .pricing-currency { font-size: 1.25rem; }
+
+  /* Download */
+  .dl-card { padding: 20px 16px; gap: 18px; }
+  .dl-app-logo { width: 52px; height: 52px; border-radius: 13px; }
+  .dl-app-logo img { width: 44px; height: 44px; }
+  .dl-app-name { font-size: 1.05rem; }
+  .dl-store-badge { padding: 11px 14px; gap: 10px; }
+  .dl-store-badge-name { font-size: .95rem; }
+  .dl-store-badge-icon { width: 26px; height: 26px; }
+  .dl-store-badge-icon svg { width: 24px; height: 24px; }
+  .dl-tags { gap: 5px; }
+  .dl-tag { font-size: .68rem; padding: 3px 9px; }
+
+  /* Contact */
+  .contact-form { padding: 26px 18px; }
+  .contact-form h3 { font-size: 1.1rem; }
+  .contact-channel { padding: 14px 14px; gap: 12px; }
+  .channel-icon { width: 36px; height: 36px; border-radius: 10px; font-size: 15px; }
+  .channel-value { font-size: .82rem; }
+
+  /* Footer */
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 28px; }
+  .footer-brand-desc { font-size: .78rem; }
+  .footer-bottom-links { flex-wrap: wrap; justify-content: center; gap: 12px; }
+
+  /* Mobile menu items */
+  .mobile-menu a { font-size: 1.2rem; }
+  .mobile-menu { gap: 24px; }
+}
+
+/* ── ≤ 360px: extra small ─────────────────────────────────── */
+@media (max-width: 360px) {
+  .lp-container { padding: 0 14px; }
+  .landing-page h2 { font-size: clamp(1.4rem, 6vw, 2rem); }
+  .hiw-switcher-btn { font-size: .70rem; padding: 9px 8px; }
+  .journey-tab-btn { font-size: .74rem; padding: 9px 10px; }
+  .dl-card { padding: 18px 14px; }
+  .footer-grid { grid-template-columns: 1fr; }
+  .pricing-card { padding: 24px 16px; }
 }

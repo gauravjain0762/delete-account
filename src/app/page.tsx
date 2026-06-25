@@ -178,7 +178,7 @@ export default function HomePage() {
 
       <div className={`mobile-menu${mobileOpen ? " open" : ""}`} role="navigation">
         <a href="#problem" onClick={closeMobile}>Problem</a>
-        <a href="#onboarding" onClick={closeMobile}>For Doctors</a>
+        <a href="#doctor-features" onClick={closeMobile}>For Doctors</a>
         <a href="#patient-features" onClick={closeMobile}>For Patients</a>
         <a href="#onboarding" onClick={() => { setJourneyTab("doctor"); closeMobile(); }}>How It Works</a>
         <a href="#pricing" onClick={closeMobile}>Pricing</a>
