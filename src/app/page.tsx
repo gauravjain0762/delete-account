@@ -32,6 +32,7 @@ export default function HomePage() {
   const [journeyTab, setJourneyTab] = useState<"doctor" | "patient">("doctor");
   const [pjLineStep, setPjLineStep] = useState(-1);
   const [form, setForm] = useState({ name: "", clinic: "", phone: "", city: "", message: "" });
+  const [formStatus, setFormStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [statCounts, setStatCounts] = useState([0, 0, 0, 0]);
   const [onbPaused, setOnbPaused] = useState(false);
   const observerRef = useRef<IntersectionObserver | null>(null);
@@ -79,13 +80,13 @@ export default function HomePage() {
   }, [onbPaused]);
 
   useEffect(() => {
-    const targets = [200, 10, 90, 15];
+    const targets = [90, 3, 1, 100];
     const observer = new IntersectionObserver(([entry]) => {
       if (!entry.isIntersecting || statsAnimated.current) return;
       statsAnimated.current = true;
       targets.forEach((target, i) => {
-        const dur = 11000;
-        const t0 = performance.now() + i * 90;
+        const dur = 1800;
+        const t0 = performance.now() + i * 150;
         const tick = (now: number) => {
           if (now < t0) { requestAnimationFrame(tick); return; }
           const p = Math.min((now - t0) / dur, 1);
@@ -95,21 +96,46 @@ export default function HomePage() {
         };
         requestAnimationFrame(tick);
       });
-    }, { threshold: 0.6 });
+    }, { threshold: 0.5 });
     if (statsRef.current) observer.observe(statsRef.current);
     return () => observer.disconnect();
   }, []);
 
   const closeMobile = () => setMobileOpen(false);
 
-  const submitDemo = () => {
+  const submitDemo = async () => {
     const { name, phone, clinic, city, message } = form;
     if (!name || !phone) {
       alert("Please fill in your name and phone number so we can reach you.");
       return;
     }
-    const wa = `https://wa.me/917568547177?text=Hi%2C%20I%27d%20like%20a%20demo%20of%20QueueToken.%0A%0AName%3A%20${encodeURIComponent(name)}%0AClinic%3A%20${encodeURIComponent(clinic || "N/A")}%0ACity%3A%20${encodeURIComponent(city || "N/A")}%0APhone%3A%20${encodeURIComponent(phone)}%0AMessage%3A%20${encodeURIComponent(message || "N/A")}`;
-    window.open(wa, "_blank");
+    setFormStatus("submitting");
+    try {
+      const res = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          access_key: "7849aa90-73ea-4f9e-bfcf-f54b267626a8",
+          subject: `New Demo Request — ${name} (${clinic || "No clinic"})`,
+          from_name: "QueueToken Website",
+          replyto: "queuetoken@gmail.com",
+          name,
+          "Clinic Name": clinic || "N/A",
+          "Phone Number": phone,
+          City: city || "N/A",
+          Message: message || "N/A",
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setFormStatus("success");
+        setForm({ name: "", clinic: "", phone: "", city: "", message: "" });
+      } else {
+        setFormStatus("error");
+      }
+    } catch {
+      setFormStatus("error");
+    }
   };
 
   return (
@@ -121,7 +147,6 @@ export default function HomePage() {
             <div className="nav-logo-icon">
               <Image src="/queuetoken-logo.png" alt="QueueToken logo" width={36} height={36} />
             </div>
-            Queue<span>Token</span>
           </a>
           <div className="nav-links" role="navigation" aria-label="Main navigation">
             <a href="#problem">Problem</a>
@@ -221,24 +246,6 @@ export default function HomePage() {
                     </a>
                   </div>
                 </div>
-                <div className="hero-stats" ref={statsRef} aria-label="Key statistics">
-                  <div className="hero-stat-item">
-                    <div className="hero-stat-num">{statCounts[0]}<span>+</span></div>
-                    <div className="hero-stat-label">Clinics Onboarded</div>
-                  </div>
-                  <div className="hero-stat-item">
-                    <div className="hero-stat-num">{statCounts[1]}K<span>+</span></div>
-                    <div className="hero-stat-label">Appointments Managed</div>
-                  </div>
-                  <div className="hero-stat-item">
-                    <div className="hero-stat-num">{statCounts[2]}<span>%</span></div>
-                    <div className="hero-stat-label">Less Waiting Time</div>
-                  </div>
-                  <div className="hero-stat-item">
-                    <div className="hero-stat-num">{statCounts[3]}<span>+</span></div>
-                    <div className="hero-stat-label">Cities Covered</div>
-                  </div>
-                </div>
               </div>
               <div className="hero-phones" aria-hidden="true">
                 <div className="phone-frame front">
@@ -288,29 +295,6 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* SOCIAL PROOF BAR */}
-        <div className="social-proof-bar" aria-label="Key metrics">
-          <div className="lp-container">
-            <div className="social-proof-inner">
-              <div className="social-proof-item">
-                <span className="proof-num">500+</span>
-                <span className="proof-label">Clinics</span>
-              </div>
-              <div className="social-proof-item">
-                <span className="proof-num">1,00,000+</span>
-                <span className="proof-label">Patients</span>
-              </div>
-              <div className="social-proof-item">
-                <span className="proof-num">20+</span>
-                <span className="proof-label">Cities</span>
-              </div>
-              <div className="social-proof-item">
-                <span className="proof-num">₹0</span>
-                <span className="proof-label">Setup Fee</span>
-              </div>
-            </div>
-          </div>
-        </div>
 
         {/* MARQUEE */}
         <div className="marquee-band" aria-hidden="true">
@@ -327,8 +311,8 @@ export default function HomePage() {
         {/* PROBLEM */}
         <section id="problem" aria-labelledby="problem-heading">
           <div className="lp-container">
-            <div className="reveal">
-              <div className="section-label">The Problem</div>
+            <div className="reveal" style={{ textAlign: "center" }}>
+              <div className="section-label" style={{ justifyContent: "center" }}>The Problem</div>
               <h2 className="section-title" id="problem-heading">
                 Your clinic is losing time, revenue, and patients — every single day
               </h2>
@@ -448,13 +432,13 @@ export default function HomePage() {
         {/* DOCTOR FEATURES */}
         <section id="doctor-features" aria-labelledby="doctor-features-heading">
           <div className="lp-container">
-            <div className="features-header reveal">
+            <div className="features-header reveal" style={{ justifyContent: "center", textAlign: "center" }}>
               <div>
-                <div className="section-label">Doctor App</div>
+                <div className="section-label" style={{ justifyContent: "center" }}>Doctor App</div>
                 <h2 className="section-title df-heading" id="doctor-features-heading">
                   Built for how doctors actually work
                 </h2>
-                <p className="section-subtitle">
+                <p className="section-subtitle" style={{ margin: "0 auto" }}>
                   Every feature is designed around the real workflow of an Indian clinic — not a hospital
                   management system built for bureaucrats.
                 </p>
@@ -467,8 +451,9 @@ export default function HomePage() {
               <article className="df-card">
                 <div className="df-icon">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/>
-                    <line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/>
+                    <rect x="2" y="6" width="20" height="12" rx="2"/>
+                    <circle cx="12" cy="12" r="2"/>
+                    <path d="M6 12h.01M18 12h.01"/>
                   </svg>
                 </div>
                 <h3 className="df-card-title">Live Revenue Dashboard</h3>
@@ -483,6 +468,8 @@ export default function HomePage() {
                     <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
                     <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/>
                     <line x1="3" y1="10" x2="21" y2="10"/>
+                    <line x1="8" y1="14" x2="8.01" y2="14"/><line x1="12" y1="14" x2="12.01" y2="14"/><line x1="16" y1="14" x2="16.01" y2="14"/>
+                    <line x1="8" y1="18" x2="8.01" y2="18"/><line x1="12" y1="18" x2="12.01" y2="18"/><line x1="16" y1="18" x2="16.01" y2="18"/>
                   </svg>
                 </div>
                 <h3 className="df-card-title">Appointment Management</h3>
@@ -506,8 +493,13 @@ export default function HomePage() {
               <article className="df-card">
                 <div className="df-icon">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
-                    <line x1="1" y1="10" x2="23" y2="10"/>
+                    <rect x="3" y="3" width="7" height="7" rx="1"/>
+                    <rect x="14" y="3" width="7" height="7" rx="1"/>
+                    <rect x="3" y="14" width="7" height="7" rx="1"/>
+                    <path d="M15 15h2M15 19h2M19 15v2M19 19v2M21 15h.01M21 21h.01M15 21h.01"/>
+                    <rect x="5" y="5" width="3" height="3" fill="currentColor" stroke="none"/>
+                    <rect x="16" y="5" width="3" height="3" fill="currentColor" stroke="none"/>
+                    <rect x="5" y="16" width="3" height="3" fill="currentColor" stroke="none"/>
                   </svg>
                 </div>
                 <h3 className="df-card-title">Flexible Payment Setup</h3>
@@ -554,8 +546,8 @@ export default function HomePage() {
                   <svg viewBox="0 0 340 200" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <defs>
                       <linearGradient id="tealBg" x1="0" y1="0" x2="1" y2="1">
-                        <stop offset="0%" stopColor="#2DD4BF"/>
-                        <stop offset="100%" stopColor="#0D9488"/>
+                        <stop offset="0%" stopColor="#FB2C36"/>
+                        <stop offset="100%" stopColor="#B01A22"/>
                       </linearGradient>
                     </defs>
                     <rect width="340" height="200" fill="url(#tealBg)" rx="0"/>
@@ -589,7 +581,7 @@ export default function HomePage() {
                     <polygon points="79,93 84,97 79,101" fill="rgba(255,255,255,0.55)"/>
                     {/* token badge */}
                     <rect x="14" y="78" width="34" height="22" rx="8" fill="rgba(255,255,255,0.92)"/>
-                    <text x="31" y="93" textAnchor="middle" fontFamily="sans-serif" fontSize="11" fontWeight="800" fill="#0D9488">#5</text>
+                    <text x="31" y="93" textAnchor="middle" fontFamily="sans-serif" fontSize="11" fontWeight="800" fill="#B01A22">#5</text>
                     {/* person walking out */}
                     <circle cx="310" cy="115" r="10" fill="rgba(255,255,255,0.6)"/>
                     <path d="M304 132 C304 124 316 124 316 132" fill="rgba(255,255,255,0.6)"/>
@@ -652,6 +644,9 @@ export default function HomePage() {
         {/* PATIENT FEATURES */}
         <section id="patient-features" aria-labelledby="patient-features-heading">
           <div className="lp-container">
+            <div style={{ textAlign: "center", marginBottom: 40 }} className="reveal">
+              <div className="section-label">Patient Experience</div>
+            </div>
 
             {/* Hero row: phones + features */}
             <div className="pf-hero-grid">
@@ -695,7 +690,6 @@ export default function HomePage() {
 
               {/* Features */}
               <div className="reveal" style={{ transitionDelay: ".1s" }}>
-                <div className="section-label">Patient Experience</div>
                 <h2 className="section-title" id="patient-features-heading">
                   From &ldquo;I need a doctor&rdquo; to <span style={{ color: "var(--red)" }}>Token #2</span> in<br />under 60 seconds
                 </h2>
@@ -887,7 +881,7 @@ export default function HomePage() {
                   </div>
                   <div style={{ padding: "24px 28px 28px" }}>
                     <div style={{ fontFamily: "var(--font-d)", fontSize: "1rem", fontWeight: 700, color: "var(--text-1)", marginBottom: 6 }}>Register in under 10 minutes</div>
-                    <p style={{ fontSize: ".83rem", color: "var(--text-2)", marginBottom: 18, lineHeight: 1.65 }}>Watch this short walkthrough to see exactly how to set up your clinic — from download to your first booking.</p>
+                    <p style={{ fontSize: ".81rem", color: "var(--text-2)", marginBottom: 18, lineHeight: 1.6 }}>Watch this short walkthrough to see exactly how to set up your clinic — from download to your first booking.</p>
                     <a href="#download" className="btn btn-primary" style={{ width: "100%", justifyContent: "center" }}>Register Your Clinic Now </a>
                   </div>
                 </div>
@@ -1036,80 +1030,15 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* TESTIMONIALS */}
-        <section id="testimonials" aria-labelledby="testimonials-heading">
-          <div className="lp-container">
-            <div className="testi-header reveal">
-              <div className="section-label">Testimonials</div>
-              <h2 className="section-title" id="testimonials-heading">
-                Doctors and patients love QueueToken
-              </h2>
-              <p className="section-subtitle">
-                Real results from real clinics. See what happens when queues become smart.
-              </p>
-            </div>
-            <div className="testi-grid reveal">
-              <article className="testi-card">
-                <div className="testi-stars">★★★★★</div>
-                <p className="testi-quote">
-                  My waiting room crowd dropped by 80% in the very first week. I can now see exactly
-                  who&apos;s coming and when. The revenue dashboard is a game-changer for me.
-                </p>
-                <div className="testi-author">
-                  <div className="testi-avatar" style={{ background: "rgba(251,44,54,0.1)", color: "var(--red)" }}>RS</div>
-                  <div>
-                    <div className="testi-name">Dr. Ramesh Shah</div>
-                    <div className="testi-role">General Physician · Surat, Gujarat</div>
-                  </div>
-                  <span className="testi-type-badge" style={{ background: "rgba(251,44,54,0.08)", color: "var(--red)", border: "1px solid rgba(251,44,54,0.16)" }}>
-                    Doctor
-                  </span>
-                </div>
-              </article>
-              <article className="testi-card">
-                <div className="testi-stars">★★★★★</div>
-                <p className="testi-quote">
-                  I used to sit in the clinic for 2 hours every Tuesday. Now I get a token, go home, and
-                  come back just when it&apos;s my turn. This app has literally saved my mornings.
-                </p>
-                <div className="testi-author">
-                  <div className="testi-avatar" style={{ background: "rgba(59,130,246,0.1)", color: "#2563EB" }}>PM</div>
-                  <div>
-                    <div className="testi-name">Priya Mehta</div>
-                    <div className="testi-role">Patient · Ahmedabad, Gujarat</div>
-                  </div>
-                  <span className="testi-type-badge" style={{ background: "rgba(59,130,246,0.08)", color: "#2563EB", border: "1px solid rgba(59,130,246,0.16)" }}>
-                    Patient
-                  </span>
-                </div>
-              </article>
-              <article className="testi-card">
-                <div className="testi-stars">★★★★★</div>
-                <p className="testi-quote">
-                  Setting up took less than 10 minutes. The app is very simple to use and my staff needed
-                  zero training. I recommend it to every doctor in my network.
-                </p>
-                <div className="testi-author">
-                  <div className="testi-avatar" style={{ background: "rgba(251,44,54,0.1)", color: "var(--red)" }}>AP</div>
-                  <div>
-                    <div className="testi-name">Dr. Anita Patel</div>
-                    <div className="testi-role">Dermatologist · Vadodara, Gujarat</div>
-                  </div>
-                  <span className="testi-type-badge" style={{ background: "rgba(251,44,54,0.08)", color: "var(--red)", border: "1px solid rgba(251,44,54,0.16)" }}>
-                    Doctor
-                  </span>
-                </div>
-              </article>
-            </div>
-          </div>
-        </section>
 
         {/* WHY US */}
         <section id="why-us" aria-labelledby="why-heading">
           <div className="lp-container">
+            <div style={{ textAlign: "center", marginBottom: 40 }} className="reveal">
+              <div className="section-label">Why Queue Token</div>
+            </div>
             <div className="why-grid">
               <div className="reveal">
-                <div className="section-label">Why QueueToken</div>
                 <h2 className="section-title" id="why-heading">
                   A completely different category — not just better than paper tokens
                 </h2>
@@ -1117,11 +1046,11 @@ export default function HomePage() {
                   Other &ldquo;solutions&rdquo; are paper tokens, WhatsApp groups, or generic software not built
                   for clinics. QueueToken is purpose-built for the way Indian doctors and patients actually work.
                 </p>
-                <div className="why-stats-grid">
-                  <div className="why-stat"><div className="why-stat-num">90%</div><div className="why-stat-label">Less waiting room crowding</div></div>
-                  <div className="why-stat"><div className="why-stat-num">3×</div><div className="why-stat-label">Faster patient flow</div></div>
-                  <div className="why-stat"><div className="why-stat-num">₹1</div><div className="why-stat-label">To get started today</div></div>
-                  <div className="why-stat"><div className="why-stat-num">100%</div><div className="why-stat-label">Revenue visibility daily</div></div>
+                <div className="why-stats-grid" ref={statsRef}>
+                  <div className="why-stat"><div className="why-stat-num">{statCounts[0]}<span>%</span></div><div className="why-stat-label">Less waiting room crowding</div></div>
+                  <div className="why-stat"><div className="why-stat-num">{statCounts[1]}<span>×</span></div><div className="why-stat-label">Faster patient flow</div></div>
+                  <div className="why-stat"><div className="why-stat-num"><span>₹</span>{statCounts[2]}</div><div className="why-stat-label">To get started today</div></div>
+                  <div className="why-stat"><div className="why-stat-num">{statCounts[3]}<span>%</span></div><div className="why-stat-label">Revenue visibility daily</div></div>
                 </div>
               </div>
               <div className="reveal" style={{ transitionDelay: ".15s" }}>
@@ -1223,7 +1152,7 @@ export default function HomePage() {
             <div className="download-inner reveal">
               <div className="section-label" style={{ justifyContent: "center" }}>Download Now</div>
               <h2 style={{ marginBottom: 16 }} id="download-heading">
-                Join 200+ clinics already running smarter
+                Join clinics already running smarter
               </h2>
               <p className="download-subtitle">Available on Android. Free to download. Start today.</p>
               <div className="download-apps">
@@ -1289,7 +1218,9 @@ export default function HomePage() {
           <div className="lp-container">
             <div className="contact-grid">
               <div className="contact-info reveal">
-                <div className="section-label">Contact Us</div>
+                <div style={{ textAlign: "center" }}>
+                  <div className="section-label">Contact Us</div>
+                </div>
                 <h2 id="contact-heading">Want a personal demo for your clinic?</h2>
                 <p style={{ marginBottom: 32 }}>
                   Our team will personally walk you through QueueToken and set up your clinic profile
@@ -1302,9 +1233,14 @@ export default function HomePage() {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    <div className="channel-icon" style={{ background: "rgba(37,211,102,0.1)" }}>💬</div>
+                    <div className="channel-icon" style={{ background: "rgba(37,211,102,0.1)" }}>
+                      <svg viewBox="0 0 32 32" width="22" height="22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M16 2C8.268 2 2 8.268 2 16c0 2.47.664 4.784 1.82 6.773L2 30l7.418-1.793A13.93 13.93 0 0 0 16 30c7.732 0 14-6.268 14-14S23.732 2 16 2Z" fill="#25D366"/>
+                        <path d="M22.548 19.67c-.31-.155-1.833-.904-2.117-1.007-.283-.103-.49-.155-.696.155-.207.31-.8 1.007-.98 1.214-.18.207-.362.232-.672.077-.31-.155-1.308-.482-2.491-1.537-.92-.822-1.541-1.836-1.722-2.146-.18-.31-.019-.477.135-.631.139-.139.31-.362.464-.543.155-.18.207-.31.31-.516.103-.207.052-.387-.026-.543-.077-.155-.696-1.677-.954-2.297-.251-.603-.507-.521-.696-.531l-.593-.01c-.207 0-.542.077-.826.387s-1.085 1.06-1.085 2.582 1.11 2.995 1.265 3.202c.155.207 2.186 3.338 5.298 4.682.74.319 1.318.51 1.769.652.743.236 1.42.203 1.954.123.596-.089 1.833-.749 2.092-1.472.258-.723.258-1.343.18-1.472-.077-.129-.284-.207-.594-.362Z" fill="#fff"/>
+                      </svg>
+                    </div>
                     <div>
-                      <div className="channel-label">WhatsApp (Fastest)</div>
+                      <div className="channel-label">WhatsApp (For Quick response)</div>
                       <div className="channel-value">+91 9509647637</div>
                     </div>
                   </a>
@@ -1321,22 +1257,6 @@ export default function HomePage() {
                       <div className="channel-label">Support Hours</div>
                       <div className="channel-value">9 AM – 9 PM · Mon to Sat</div>
                     </div>
-                  </div>
-                </div>
-                <div className="contact-trust">
-                  <div className="contact-trust-item">
-                    <span className="contact-trust-num">200+</span>
-                    <span className="contact-trust-lbl">Clinics Onboarded</span>
-                  </div>
-                  <div className="contact-trust-divider" />
-                  <div className="contact-trust-item">
-                    <span className="contact-trust-num">&lt;&nbsp;2 hrs</span>
-                    <span className="contact-trust-lbl">Avg. Response</span>
-                  </div>
-                  <div className="contact-trust-divider" />
-                  <div className="contact-trust-item">
-                    <span className="contact-trust-num">4.8 ★</span>
-                    <span className="contact-trust-lbl">Doctor Rating</span>
                   </div>
                 </div>
               </div>
@@ -1409,13 +1329,30 @@ export default function HomePage() {
                       onChange={(e) => setForm({ ...form, message: e.target.value })}
                     />
                   </div>
-                  <button
-                    className="btn btn-primary"
-                    style={{ width: "100%", justifyContent: "center" }}
-                    onClick={submitDemo}
-                    type="button"
-                  >
-                    Request My Free Demo                  </button>
+                  {formStatus === "success" ? (
+                    <div style={{ textAlign: "center", padding: "16px", background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.3)", borderRadius: 10 }}>
+                      <div style={{ fontSize: "1.4rem", marginBottom: 6 }}>✅</div>
+                      <div style={{ fontWeight: 700, color: "#16a34a", marginBottom: 4 }}>Request Sent!</div>
+                      <div style={{ fontSize: ".85rem", color: "var(--text-2)" }}>We&apos;ll call you back within 2 hours.</div>
+                    </div>
+                  ) : (
+                    <>
+                      {formStatus === "error" && (
+                        <div style={{ marginBottom: 12, padding: "10px 14px", background: "rgba(251,44,54,0.07)", border: "1px solid rgba(251,44,54,0.2)", borderRadius: 8, fontSize: ".83rem", color: "var(--red)" }}>
+                          Something went wrong. Please try again or WhatsApp us directly.
+                        </div>
+                      )}
+                      <button
+                        className="btn btn-primary"
+                        style={{ width: "100%", justifyContent: "center", opacity: formStatus === "submitting" ? 0.7 : 1 }}
+                        onClick={submitDemo}
+                        type="button"
+                        disabled={formStatus === "submitting"}
+                      >
+                        {formStatus === "submitting" ? "Sending…" : "Request My Free Demo"}
+                      </button>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
@@ -1460,7 +1397,6 @@ export default function HomePage() {
                 <li><a href="#contact">About Us</a></li>
                 <li><a href="#contact">Contact</a></li>
                 <li><a href="#contact">Request Demo</a></li>
-                <li><a href="#testimonials">Testimonials</a></li>
               </ul>
             </div>
             <div className="footer-col">
