@@ -28,10 +28,17 @@ const GOOGLE_PLAY_SVG = (
 export default function HomePage() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<"doctor" | "patient">("doctor");
   const [activeOnbStep, setActiveOnbStep] = useState(0);
+  const [journeyTab, setJourneyTab] = useState<"doctor" | "patient">("doctor");
+  const [pjLineStep, setPjLineStep] = useState(-1);
   const [form, setForm] = useState({ name: "", clinic: "", phone: "", city: "", message: "" });
+  const [statCounts, setStatCounts] = useState([0, 0, 0, 0]);
+  const [onbPaused, setOnbPaused] = useState(false);
   const observerRef = useRef<IntersectionObserver | null>(null);
+  const statsRef = useRef<HTMLDivElement>(null);
+  const statsAnimated = useRef(false);
+  const onbRef = useRef<HTMLElement>(null);
+  const onbVisible = useRef(false);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 40);
@@ -43,22 +50,55 @@ export default function HomePage() {
     observerRef.current = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting) entry.target.classList.add("visible");
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+            if (entry.target.classList.contains("sol-connector-reveal")) {
+              entry.target.classList.add("visible-connector");
+            }
+          }
         });
       },
       { threshold: 0.08, rootMargin: "0px 0px -40px 0px" }
     );
-    document.querySelectorAll(".reveal").forEach((el) => observerRef.current?.observe(el));
+    document.querySelectorAll(".reveal, .sol-connector-reveal").forEach((el) => observerRef.current?.observe(el));
     return () => observerRef.current?.disconnect();
   }, []);
 
   useEffect(() => {
-    if (observerRef.current) {
-      document.querySelectorAll(".hiw-steps.active .reveal").forEach((el) => {
-        observerRef.current?.observe(el);
+    const obs = new IntersectionObserver(([e]) => { onbVisible.current = e.isIntersecting; }, { threshold: 0.2 });
+    if (onbRef.current) obs.observe(onbRef.current);
+    return () => obs.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (onbPaused) return;
+    const t = setInterval(() => {
+      if (onbVisible.current) setActiveOnbStep(p => (p + 1) % 5);
+    }, 3500);
+    return () => clearInterval(t);
+  }, [onbPaused]);
+
+  useEffect(() => {
+    const targets = [200, 10, 90, 15];
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting || statsAnimated.current) return;
+      statsAnimated.current = true;
+      targets.forEach((target, i) => {
+        const dur = 11000;
+        const t0 = performance.now() + i * 90;
+        const tick = (now: number) => {
+          if (now < t0) { requestAnimationFrame(tick); return; }
+          const p = Math.min((now - t0) / dur, 1);
+          const v = Math.round((1 - Math.pow(1 - p, 3)) * target);
+          setStatCounts(prev => { const n = [...prev]; n[i] = v; return n; });
+          if (p < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
       });
-    }
-  }, [activeTab]);
+    }, { threshold: 0.6 });
+    if (statsRef.current) observer.observe(statsRef.current);
+    return () => observer.disconnect();
+  }, []);
 
   const closeMobile = () => setMobileOpen(false);
 
@@ -85,9 +125,9 @@ export default function HomePage() {
           </a>
           <div className="nav-links" role="navigation" aria-label="Main navigation">
             <a href="#problem">Problem</a>
-            <a href="#how-it-works">For Doctors</a>
+            <a href="#doctor-features">For Doctors</a>
             <a href="#patient-features">For Patients</a>
-            <a href="#how-it-works">How It Works</a>
+            <a href="#onboarding" onClick={() => setJourneyTab("doctor")}>How It Works</a>
             <a href="#pricing">Pricing</a>
             <a href="#contact">Contact</a>
           </div>
@@ -113,9 +153,9 @@ export default function HomePage() {
 
       <div className={`mobile-menu${mobileOpen ? " open" : ""}`} role="navigation">
         <a href="#problem" onClick={closeMobile}>Problem</a>
-        <a href="#how-it-works" onClick={closeMobile}>For Doctors</a>
+        <a href="#onboarding" onClick={closeMobile}>For Doctors</a>
         <a href="#patient-features" onClick={closeMobile}>For Patients</a>
-        <a href="#how-it-works" onClick={closeMobile}>How It Works</a>
+        <a href="#onboarding" onClick={() => { setJourneyTab("doctor"); closeMobile(); }}>How It Works</a>
         <a href="#pricing" onClick={closeMobile}>Pricing</a>
         <a href="#contact" onClick={closeMobile}>Contact</a>
         <a href="#download" className="btn btn-primary" onClick={closeMobile}>Download App</a>
@@ -127,6 +167,12 @@ export default function HomePage() {
           <div className="hero-bg-grid" aria-hidden="true" />
           <div className="hero-glow-1" aria-hidden="true" />
           <div className="hero-glow-2" aria-hidden="true" />
+          <div className="hero-glow-3" aria-hidden="true" />
+          <div className="hero-particle hero-particle-1" aria-hidden="true" />
+          <div className="hero-particle hero-particle-2" aria-hidden="true" />
+          <div className="hero-particle hero-particle-3" aria-hidden="true" />
+          <div className="hero-particle hero-particle-4" aria-hidden="true" />
+          <div className="hero-particle hero-particle-5" aria-hidden="true" />
           <div className="lp-container">
             <div className="hero-grid">
               <div className="hero-content">
@@ -135,18 +181,7 @@ export default function HomePage() {
                   <span>Now Live Across India</span>
                 </div>
                 <h1 className="hero-title" id="hero-heading" style={{ fontSize: 30 }}>
-                  <span
-                    style={{
-                      fontSize: "clamp(2.6rem, 6vw, 4.9rem)",
-                      letterSpacing: "-0.036em",
-                      background: "linear-gradient(135deg, #CC0000 0%, #FF1A1A 60%, #E80000 100%)",
-                      WebkitBackgroundClip: "text",
-                      WebkitTextFillColor: "transparent",
-                      backgroundClip: "text",
-                    }}
-                  >
-                    Queue Token
-                  </span>
+                  <span className="hero-title-text">Queue Token</span>
                 </h1>
                 <p className="hero-desc">
                   Queue Token helps doctors manage appointments, live queues, patient flow, payments,
@@ -184,21 +219,21 @@ export default function HomePage() {
                     </a>
                   </div>
                 </div>
-                <div className="hero-stats" aria-label="Key statistics">
+                <div className="hero-stats" ref={statsRef} aria-label="Key statistics">
                   <div className="hero-stat-item">
-                    <div className="hero-stat-num">200<span>+</span></div>
+                    <div className="hero-stat-num">{statCounts[0]}<span>+</span></div>
                     <div className="hero-stat-label">Clinics Onboarded</div>
                   </div>
                   <div className="hero-stat-item">
-                    <div className="hero-stat-num">10K<span>+</span></div>
+                    <div className="hero-stat-num">{statCounts[1]}K<span>+</span></div>
                     <div className="hero-stat-label">Appointments Managed</div>
                   </div>
                   <div className="hero-stat-item">
-                    <div className="hero-stat-num">90<span>%</span></div>
+                    <div className="hero-stat-num">{statCounts[2]}<span>%</span></div>
                     <div className="hero-stat-label">Less Waiting Time</div>
                   </div>
                   <div className="hero-stat-item">
-                    <div className="hero-stat-num">15<span>+</span></div>
+                    <div className="hero-stat-num">{statCounts[3]}<span>+</span></div>
                     <div className="hero-stat-label">Cities Covered</div>
                   </div>
                 </div>
@@ -336,8 +371,8 @@ export default function HomePage() {
                 queue management ecosystem — built specifically for Indian clinics.
               </p>
             </div>
-            <div className="solution-apps-grid reveal">
-              <div className="solution-app-card card-doctor">
+            <div className="solution-apps-grid">
+              <div className="solution-app-card card-doctor sol-card-left reveal">
                 <div className="app-card-icon app-card-icon-red">🩺</div>
                 <h3 className="app-card-title">Doctor App</h3>
                 <p className="app-card-sub">
@@ -351,17 +386,17 @@ export default function HomePage() {
                     "UPI, Cash or QR payment setup",
                     "Doctor verification & trusted profile",
                     "Team / staff management",
-                  ].map((f) => (
-                    <li key={f} className="check-red">{f}</li>
+                  ].map((f, i) => (
+                    <li key={f} className="check-red sol-feat-item" style={{ animationDelay: `${0.35 + i * 0.07}s` }}>{f}</li>
                   ))}
                 </ul>
               </div>
-              <div className="solution-connector" aria-hidden="true">
+              <div className="solution-connector sol-connector-reveal" aria-hidden="true">
                 <div className="connector-line" />
                 <div className="connector-icon">🔗</div>
                 <div className="connector-line" />
               </div>
-              <div className="solution-app-card card-patient">
+              <div className="solution-app-card card-patient sol-card-right reveal">
                 <div className="app-card-icon app-card-icon-blue">👤</div>
                 <h3 className="app-card-title">Patient App</h3>
                 <p className="app-card-sub">
@@ -375,8 +410,8 @@ export default function HomePage() {
                     "See estimated appointment time live",
                     "Clinic directions & map integration",
                     "Full appointment history & follow-up tracking",
-                  ].map((f) => (
-                    <li key={f} className="check-blue">{f}</li>
+                  ].map((f, i) => (
+                    <li key={f} className="check-blue sol-feat-item" style={{ animationDelay: `${0.35 + i * 0.07}s` }}>{f}</li>
                   ))}
                 </ul>
               </div>
@@ -412,7 +447,7 @@ export default function HomePage() {
                 </div>
                 <h3 className="df-card-title">Live Revenue Dashboard</h3>
                 <p className="df-card-desc">See today&apos;s earnings, offline vs online payments, and download detailed reports. Know your numbers before the day ends.</p>
-                <div className="df-tag">Real-Time Analytics <span className="df-tag-arrow">→</span></div>
+                <div className="df-tag">Real-Time Analytics </div>
               </article>
 
               {/* 2 — Appointments */}
@@ -426,7 +461,7 @@ export default function HomePage() {
                 </div>
                 <h3 className="df-card-title">Appointment Management</h3>
                 <p className="df-card-desc">View pending, completed, and cancelled appointments by date. Mark as paid, done, or cancel with one tap.</p>
-                <div className="df-tag">One-Tap Actions <span className="df-tag-arrow">→</span></div>
+                <div className="df-tag">One-Tap Actions </div>
               </article>
 
               {/* 3 — Timings */}
@@ -438,7 +473,7 @@ export default function HomePage() {
                 </div>
                 <h3 className="df-card-title">Clinic Timings Editor</h3>
                 <p className="df-card-desc">Set custom open/close hours for each day of the week. Toggle days on or off. Add multiple slots per day as needed.</p>
-                <div className="df-tag">Custom Scheduling <span className="df-tag-arrow">→</span></div>
+                <div className="df-tag">Custom Scheduling </div>
               </article>
 
               {/* 4 — Payment */}
@@ -451,7 +486,7 @@ export default function HomePage() {
                 </div>
                 <h3 className="df-card-title">Flexible Payment Setup</h3>
                 <p className="df-card-desc">Accept Cash only, UPI only, or both. Add your UPI ID or upload your QR code. Patients see exactly how to pay before arriving.</p>
-                <div className="df-tag">UPI Integration <span className="df-tag-arrow">→</span></div>
+                <div className="df-tag">UPI Integration </div>
               </article>
 
               {/* 5 — Verification */}
@@ -464,7 +499,7 @@ export default function HomePage() {
                 </div>
                 <h3 className="df-card-title">Verified Doctor Profile</h3>
                 <p className="df-card-desc">Submit Aadhaar and PAN for verification. A verified badge builds instant patient trust and increases booking rates significantly.</p>
-                <div className="df-tag">Trust Badge <span className="df-tag-arrow">→</span></div>
+                <div className="df-tag">Trust Badge </div>
               </article>
 
               {/* 6 — Duty toggle */}
@@ -591,7 +626,10 @@ export default function HomePage() {
         {/* PATIENT FEATURES */}
         <section id="patient-features" aria-labelledby="patient-features-heading">
           <div className="lp-container">
-            <div className="patient-grid">
+
+            {/* Hero row: phones + features */}
+            <div className="pf-hero-grid">
+              {/* Phone mockups */}
               <div className="patient-phones reveal" aria-hidden="true">
                 <div className="patient-phone back">
                   <div className="pf-content">
@@ -619,249 +657,356 @@ export default function HomePage() {
                         <div className="token-number-label">Your Token Number</div>
                         <div className="token-number">2</div>
                       </div>
-                      <div className="token-detail-row">
-                        <span className="token-detail-label">Date</span>
-                        <span className="token-detail-val">23/05/2026</span>
-                      </div>
-                      <div className="token-detail-row">
-                        <span className="token-detail-label">Estimated Time</span>
-                        <span className="token-detail-val">12:30 PM</span>
-                      </div>
-                      <div className="token-detail-row">
-                        <span className="token-detail-label">Doctor Name</span>
-                        <span className="token-detail-val">Dr. Jack</span>
-                      </div>
-                      <div className="token-detail-row">
-                        <span className="token-detail-label">Clinic</span>
-                        <span className="token-detail-val">Jack Clinic</span>
-                      </div>
-                      <div className="token-hint">
-                        💡 Please arrive 5 minutes before your appointment time
-                      </div>
+                      <div className="token-detail-row"><span className="token-detail-label">Date</span><span className="token-detail-val">23/05/2026</span></div>
+                      <div className="token-detail-row"><span className="token-detail-label">Estimated Time</span><span className="token-detail-val">12:30 PM</span></div>
+                      <div className="token-detail-row"><span className="token-detail-label">Doctor Name</span><span className="token-detail-val">Dr. Jack</span></div>
+                      <div className="token-detail-row"><span className="token-detail-label">Clinic</span><span className="token-detail-val">Jack Clinic</span></div>
+                      <div className="token-hint">💡 Please arrive 5 minutes before your appointment time</div>
                     </div>
                   </div>
                 </div>
               </div>
-              <div className="reveal">
-                <div className="section-label">Patient App</div>
+
+              {/* Features */}
+              <div className="reveal" style={{ transitionDelay: ".1s" }}>
+                <div className="section-label">Patient Experience</div>
                 <h2 className="section-title" id="patient-features-heading">
-                  From &ldquo;I need a doctor&rdquo; to Token #2 in under 60 seconds
+                  From &ldquo;I need a doctor&rdquo; to Token #2<br />in under 60 seconds
                 </h2>
-                <p className="section-subtitle" style={{ marginBottom: 32 }}>
-                  The Patient App is free, fast, and designed for anyone — no tech experience needed.
+                <p className="section-subtitle" style={{ marginBottom: 36 }}>
+                  The Patient App is free, fast, and designed for anyone — no tech experience needed. Experience clinic visits without the wait.
                 </p>
-                <div className="patient-feature-list">
-                  {[
-                    { icon: "📱", title: "Find Clinic Instantly", desc: "Scan the clinic's QR code or simply enter the doctor's registered phone number. That's it." },
-                    { icon: "🎫", title: "Real-Time Queue Token", desc: "Your token number is assigned the moment you book. Watch the queue progress live and know exactly when to arrive." },
-                    { icon: "🗺️", title: "Clinic Location & Directions", desc: "See the clinic on Google Maps and get directions — all inside the app." },
-                    { icon: "📋", title: "Appointment History", desc: "All your past and upcoming appointments in one place. Free follow-up tracking, cancellations, and rebooking — effortless." },
-                  ].map((f) => (
-                    <div key={f.title} className="patient-feat">
-                      <div className="patient-feat-icon">{f.icon}</div>
+                <div className="pf-feat-list">
+                  {([
+                    {
+                      bg: "#F1F5F9", color: "#64748B",
+                      svg: <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>,
+                      title: "Find Clinic Instantly, Manage Past Sessions",
+                      desc: "Shows every registered clinic. Shows clinics the patient has visited before.",
+                    },
+                    {
+                      bg: "#EFF6FF", color: "#3B82F6",
+                      svg: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="20" height="20"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>,
+                      title: "Real-Time Queue Token",
+                      desc: "See the live queue, current token, and estimated waiting time in real time.",
+                    },
+                    {
+                      bg: "#F0FDFA", color: "#0D9488",
+                      svg: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="20" height="20"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>,
+                      title: "Clinic Location & Directions",
+                      desc: "See the clinic on Google Maps and get directions — all inside the app. Never get lost on your way to an appointment.",
+                    },
+                    {
+                      bg: "#F9FAFB", color: "#9CA3AF",
+                      svg: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="20" height="20"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>,
+                      title: "Appointment History",
+                      desc: "All your past and upcoming appointments in one place. Free follow-up tracking, cancellations, and rebooking — effortless.",
+                    },
+                  ] as Array<{ bg: string; color: string; svg: React.ReactNode; title: string; desc: string }>).map((f, i) => (
+                    <div key={f.title} className="pf-feat" style={{ animationDelay: `${i * 0.1}s` }}>
+                      <div className="pf-feat-icon-box" style={{ background: f.bg, color: f.color }}>{f.svg}</div>
                       <div>
-                        <h4>{f.title}</h4>
-                        <p>{f.desc}</p>
+                        <h4 className="pf-feat-title">{f.title}</h4>
+                        <p className="pf-feat-desc">{f.desc}</p>
                       </div>
                     </div>
                   ))}
                 </div>
               </div>
             </div>
-          </div>
-        </section>
 
-        {/* HOW IT WORKS */}
-        <section id="how-it-works" aria-labelledby="hiw-heading">
-          <div className="lp-container">
-            <div className="hiw-header reveal">
-              <div className="section-label">How It Works</div>
-              <h2 className="section-title" id="hiw-heading">
-                The complete journey — from registration to consultation
-              </h2>
-              <p className="section-subtitle">
-                QueueToken works for both sides simultaneously. Here&apos;s the full picture.
-              </p>
-            </div>
-            <div className="hiw-tabs reveal" role="tablist">
-              <button
-                className={`hiw-tab${activeTab === "doctor" ? " active" : ""}`}
-                role="tab"
-                aria-selected={activeTab === "doctor"}
-                onClick={() => setActiveTab("doctor")}
-              >
-                🩺 Doctor Journey
-              </button>
-              <button
-                className={`hiw-tab${activeTab === "patient" ? " active" : ""}`}
-                role="tab"
-                aria-selected={activeTab === "patient"}
-                onClick={() => setActiveTab("patient")}
-              >
-                👤 Patient Journey
-              </button>
-            </div>
-
-            {/* Doctor steps */}
-            <div className={`hiw-steps${activeTab === "doctor" ? " active" : ""}`} role="tabpanel">
-              {[
-                { num: "1", icon: "📲", title: "Download & Register", desc: "Sign up with your mobile number. OTP verified in seconds. No paperwork needed." },
-                { num: "2", icon: "🏥", title: "Set Up Your Clinic", desc: "Add clinic name, address, timings, services, and consultation fee in 5 steps.", delay: ".1s" },
-                { num: "3", icon: "🟢", title: "Go Live & Get Bookings", desc: "Once verified, patients find you by QR or phone number and start booking instantly.", delay: ".2s" },
-                { num: "4", icon: "📊", title: "Manage & Grow", desc: "Track appointments, see revenue, manage your queue — all in one dashboard every day.", delay: ".3s" },
-              ].map((s) => (
-                <div key={s.num} className="hiw-step reveal" style={s.delay ? { transitionDelay: s.delay } : {}}>
-                  <div className="hiw-step-num">{s.num}</div>
-                  <div className="hiw-step-icon">{s.icon}</div>
-                  <h4>{s.title}</h4>
-                  <p>{s.desc}</p>
+            {/* Modern Clinical Standards */}
+            <div className="pf-standards reveal">
+              <div className="pf-standards-left">
+                <div className="section-label">Modern Clinical Standards</div>
+                <p className="pf-standards-desc">
+                  Our platform is designed to meet the rigorous demands of modern healthcare while maintaining a user-friendly interface that patients love.
+                </p>
+                <div className="pf-stats-row">
+                  <div className="pf-stat">
+                    <div className="pf-stat-num">99<span>%</span></div>
+                    <div className="pf-stat-label">Patient Satisfaction</div>
+                  </div>
+                  <div className="pf-stat-divider" />
+                  <div className="pf-stat">
+                    <div className="pf-stat-num">45<span>m</span></div>
+                    <div className="pf-stat-label">Avg. Wait Time Saved</div>
+                  </div>
                 </div>
-              ))}
-            </div>
-
-            {/* Patient steps */}
-            <div className={`hiw-steps${activeTab === "patient" ? " active" : ""}`} role="tabpanel">
-              {[
-                { num: "1", icon: "📥", title: "Download Patient App", desc: "Free on Android & iOS. Register with your mobile number in under a minute." },
-                { num: "2", icon: "🔍", title: "Find Your Doctor", desc: "Scan the clinic QR code or enter the doctor's registered number to find their profile.", delay: ".1s" },
-                { num: "3", icon: "🎫", title: "Book & Get Token", desc: "Choose your slot, fill details, and instantly get your real-time queue token number.", delay: ".2s" },
-                { num: "4", icon: "🚶", title: "Arrive When It's Your Turn", desc: "Track the queue live. Arrive 5 minutes before your slot. Zero waiting, zero crowd.", delay: ".3s" },
-              ].map((s) => (
-                <div key={s.num} className="hiw-step reveal" style={s.delay ? { transitionDelay: s.delay } : {}}>
-                  <div className="hiw-step-num">{s.num}</div>
-                  <div className="hiw-step-icon">{s.icon}</div>
-                  <h4>{s.title}</h4>
-                  <p>{s.desc}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ONBOARDING */}
-        <section id="onboarding" aria-labelledby="onboarding-heading">
-          <div className="lp-container">
-            <div className="reveal">
-              <div className="section-label">Doctor Onboarding</div>
-              <h2 className="section-title" id="onboarding-heading">
-                Your clinic is live in 5 simple steps
-              </h2>
-              <p className="section-subtitle">
-                No IT team needed. No training. No complexity. If you can use WhatsApp, you can set up QueueToken.
-              </p>
-            </div>
-            <div className="onboarding-grid">
-              <div className="onb-steps-stack reveal">
-                {[
-                  { icon: "📲", title: "Register with Mobile OTP", desc: "Download the Doctor App, enter your phone number, and verify with OTP. Secure and instant — no paperwork at all.", time: "~1 min" },
-                  { icon: "🏥", title: "Set Up Your Clinic Profile", desc: "Add your clinic name, address, qualifications, consultation fee, and clinic photos. Patients see this before booking.", time: "~3 min" },
-                  { icon: "🗓️", title: "Set Services & Availability", desc: "Select your specialisations, set per-day clinic hours, and define your max patients per slot.", time: "~2 min" },
-                  { icon: "💳", title: "Configure Payments", desc: "Choose Cash, UPI, or both. Enter your UPI ID or upload a QR code. Patients see how to pay before arriving.", time: "~1 min" },
-                  { icon: "🚀", title: "Verify & Go Live!", desc: "Upload Aadhaar & PAN for verification. Once approved, patients across India can find and book you instantly.", time: "~3 min" },
-                ].map((step, i) => (
-                  <div
-                    key={i}
-                    className={`onb-card${activeOnbStep === i ? " active" : ""}`}
-                    onClick={() => setActiveOnbStep(i)}
-                  >
-                    <div className="onb-num">{i + 1}</div>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
-                        <span className="onb-icon">{step.icon}</span>
-                        <h4 style={{ margin: 0 }}>{step.title}</h4>
+              </div>
+              <div className="pf-standards-visual" aria-hidden="true">
+                <div className="pf-clinic-card">
+                  <div className="pf-clinic-header">
+                    <div className="pf-clinic-dot" style={{ background: "#FF5F57" }} />
+                    <div className="pf-clinic-dot" style={{ background: "#FFBD2E" }} />
+                    <div className="pf-clinic-dot" style={{ background: "#28CA41" }} />
+                    <span style={{ marginLeft: 8, fontSize: ".72rem", color: "var(--text-3)" }}>QueueToken Patient App</span>
+                  </div>
+                  <div className="pf-clinic-body">
+                    <div className="pf-clinic-row">
+                      <div className="pf-clinic-avatar">👨‍⚕️</div>
+                      <div>
+                        <div className="pf-clinic-name">Dr. Ramesh Shah</div>
+                        <div className="pf-clinic-sub">General Physician · Surat</div>
                       </div>
-                      <p>{step.desc}</p>
-                      <div className="onb-card-footer">
-                        <span className="onb-time-badge">⏱ {step.time}</span>
-                        <span style={{ fontSize: ".72rem", color: "var(--text-3)" }}>Step {i + 1} of 5</span>
+                      <div className="pf-clinic-open">Open</div>
+                    </div>
+                    <div className="pf-clinic-token-row">
+                      <div>
+                        <div className="pf-clinic-token-label">Current Token</div>
+                        <div className="pf-clinic-token">#12</div>
+                      </div>
+                      <div>
+                        <div className="pf-clinic-token-label">Your Token</div>
+                        <div className="pf-clinic-token" style={{ color: "var(--red)" }}>#15</div>
+                      </div>
+                      <div>
+                        <div className="pf-clinic-token-label">Est. Wait</div>
+                        <div className="pf-clinic-token" style={{ fontSize: "1.2rem" }}>18m</div>
                       </div>
                     </div>
+                    <div className="pf-clinic-bar-wrap">
+                      <div className="pf-clinic-bar" style={{ width: "72%" }} />
+                    </div>
+                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: ".68rem", color: "var(--text-3)" }}>
+                      <span>Queue progress</span><span>72%</span>
+                    </div>
                   </div>
-                ))}
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        {/* JOURNEY — Doctors & Patients tabbed section */}
+        <section id="onboarding" ref={onbRef as React.RefObject<HTMLElement>} aria-labelledby="onboarding-heading">
+          <div className="lp-container">
+
+            {/* Sliding pill tab switcher */}
+            <div className="journey-switcher reveal">
+              <div className="journey-tab-track" role="tablist">
+                <button
+                  className={`journey-tab-btn${journeyTab === "doctor" ? " active" : ""}`}
+                  role="tab"
+                  aria-selected={journeyTab === "doctor"}
+                  onClick={() => setJourneyTab("doctor")}
+                >
+                  <span>🩺</span> Doctors
+                </button>
+                <button
+                  className={`journey-tab-btn${journeyTab === "patient" ? " active" : ""}`}
+                  role="tab"
+                  aria-selected={journeyTab === "patient"}
+                  onClick={() => setJourneyTab("patient")}
+                >
+                  <span>👤</span> Patients
+                </button>
+                <div
+                  className="journey-tab-thumb"
+                  aria-hidden="true"
+                  style={{ transform: journeyTab === "patient" ? "translateX(100%)" : "translateX(0)" }}
+                />
+              </div>
+            </div>
+
+            {/* ── DOCTOR PANEL ── */}
+            <div className={`journey-panel${journeyTab === "doctor" ? " journey-panel--active" : ""}`} role="tabpanel">
+              <div className="journey-header">
+                <div className="section-label">Doctor Onboarding</div>
+                <h2 className="section-title" id="onboarding-heading">Your clinic is live in 5 simple steps</h2>
+                <p className="section-subtitle">No IT team needed. No training. No complexity. If you can use WhatsApp, you can set up QueueToken.</p>
+              </div>
+              <div className="onboarding-grid">
+                <div className="onb-steps-stack">
+                  <div className="onb-progress">
+                    <div className="onb-progress-fill" style={{ width: `${(activeOnbStep / 4) * 100}%` }} />
+                  </div>
+                  {[
+                    { icon: "📲", title: "Register with Mobile OTP", desc: "Download the Doctor App, enter your phone number, and verify with OTP. Secure and instant — no paperwork at all.", time: "~1 min" },
+                    { icon: "🏥", title: "Set Up Your Clinic Profile", desc: "Add your clinic name, address, qualifications, consultation fee, and clinic photos. Patients see this before booking.", time: "~3 min" },
+                    { icon: "🗓️", title: "Set Services & Availability", desc: "Select your specialisations, set per-day clinic hours, and define your max patients per slot.", time: "~2 min" },
+                    { icon: "💳", title: "Configure Payments", desc: "Choose Cash, UPI, or both. Enter your UPI ID or upload a QR code. Patients see how to pay before arriving.", time: "~1 min" },
+                    { icon: "🚀", title: "Verify & Go Live!", desc: "Upload Aadhaar & PAN for verification. Once approved, patients across India can find and book you instantly.", time: "~3 min" },
+                  ].map((step, i) => (
+                    <div
+                      key={i}
+                      className={`onb-card${activeOnbStep === i ? " active" : ""}`}
+                      onClick={() => { setActiveOnbStep(i); setOnbPaused(true); }}
+                    >
+                      <div className="onb-num">{i + 1}</div>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
+                          <span className="onb-icon">{step.icon}</span>
+                          <h4 style={{ margin: 0 }}>{step.title}</h4>
+                        </div>
+                        <p>{step.desc}</p>
+                        <div className="onb-card-footer">
+                          <span className="onb-time-badge">⏱ {step.time}</span>
+                          <span style={{ fontSize: ".72rem", color: "var(--text-3)" }}>Step {i + 1} of 5</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="onboarding-visual" style={{ padding: 0, overflow: "hidden", background: "var(--bg-card2)" }}>
+                  <div style={{ position: "relative", width: "100%", paddingBottom: "56.25%", background: "#0f0f0f", borderRadius: "var(--r-xl) var(--r-xl) 0 0", overflow: "hidden" }}>
+                    <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: "linear-gradient(145deg,#1a0a0a,#2a1010)", cursor: "pointer" }}>
+                      <div style={{ width: 72, height: 72, background: "var(--red)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 0 40px rgba(251,44,54,0.45)", marginBottom: 18 }}>
+                        <svg viewBox="0 0 24 24" width={28} height={28} fill="white" style={{ marginLeft: 4 }}><path d="M8 5v14l11-7z" /></svg>
+                      </div>
+                      <div style={{ fontFamily: "var(--font-d)", fontSize: "1rem", fontWeight: 700, color: "#F1EDE8", marginBottom: 6 }}>How to Register Your Clinic</div>
+                      <div style={{ fontSize: ".8rem", color: "rgba(241,237,232,0.5)" }}>2 min walkthrough</div>
+                    </div>
+                  </div>
+                  <div style={{ padding: "24px 28px 28px" }}>
+                    <div style={{ fontFamily: "var(--font-d)", fontSize: "1rem", fontWeight: 700, color: "var(--text-1)", marginBottom: 6 }}>Register in under 10 minutes</div>
+                    <p style={{ fontSize: ".83rem", color: "var(--text-2)", marginBottom: 18, lineHeight: 1.65 }}>Watch this short walkthrough to see exactly how to set up your clinic — from download to your first booking.</p>
+                    <a href="#download" className="btn btn-primary" style={{ width: "100%", justifyContent: "center" }}>Register Your Clinic Now </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* ── PATIENT PANEL ── */}
+            <div className={`journey-panel${journeyTab === "patient" ? " journey-panel--active" : ""}`} role="tabpanel">
+              <div className="journey-header">
+                <div className="section-label">Patient Journey</div>
+                <h2 className="section-title">Seamless Clinical Journeys<br />Designed for Precision</h2>
+                <p className="section-subtitle">Experience healthcare without the wait. Our automated queue management system ensures you spend less time in the waiting room and more time with your doctor.</p>
               </div>
 
               <div
-                className="onboarding-visual reveal"
-                style={{ transitionDelay: ".15s", padding: 0, overflow: "hidden", background: "var(--bg-card2)" }}
+                className="pj-steps-list"
+                style={{ "--pj-line-scale": pjLineStep >= 0 ? pjLineStep / 4 : 0 } as React.CSSProperties}
+                onMouseLeave={() => setPjLineStep(-1)}
               >
-                <div
-                  style={{
-                    position: "relative",
-                    width: "100%",
-                    paddingBottom: "56.25%",
-                    background: "#0f0f0f",
-                    borderRadius: "var(--r-xl) var(--r-xl) 0 0",
-                    overflow: "hidden",
-                  }}
-                >
-                  <div
-                    style={{
-                      position: "absolute",
-                      inset: 0,
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      background: "linear-gradient(145deg,#1a0a0a,#2a1010)",
-                      cursor: "pointer",
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: 72,
-                        height: 72,
-                        background: "var(--red)",
-                        borderRadius: "50%",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        boxShadow: "0 0 40px rgba(211,48,48,0.45)",
-                        marginBottom: 18,
-                      }}
-                    >
-                      <svg viewBox="0 0 24 24" width={28} height={28} fill="white" style={{ marginLeft: 4 }}>
-                        <path d="M8 5v14l11-7z" />
-                      </svg>
+                {/* Step 1 */}
+                <div className="pj-step" style={{ "--pj-delay": "0s" } as React.CSSProperties} onMouseEnter={() => setPjLineStep(0)}>
+                  <div className="pj-step-num">1</div>
+                  <div className="pj-inner">
+                    <div className="pj-content">
+                      <div className="pj-step-label">Step 01</div>
+                      <h3 className="pj-step-title">Find a Clinic</h3>
+                      <p className="pj-step-desc">Find your nearest clinic through our referral or clinic search engine. Search by specialisation, doctor name, or location instantly.</p>
                     </div>
-                    <div
-                      style={{
-                        fontFamily: "var(--font-d)",
-                        fontSize: "1rem",
-                        fontWeight: 700,
-                        color: "#F1EDE8",
-                        marginBottom: 6,
-                      }}
-                    >
-                      How to Register Your Clinic
+                    <div className="pj-visual">
+                      <div className="pj-mock">
+                        <div className="pj-mock-search-bar"><span>🔍</span> Search clinics near you…</div>
+                        {[{ emoji: "👨‍⚕️", name: "Dr. Ramesh Shah", spec: "General Physician", dist: "0.8 km" }, { emoji: "👩‍⚕️", name: "Dr. Anita Patel", spec: "Dermatologist", dist: "1.4 km" }, { emoji: "👨‍⚕️", name: "Dr. Kiran Mehta", spec: "Paediatrician", dist: "2.1 km" }].map(c => (
+                          <div key={c.name} className="pj-mock-clinic-item">
+                            <div className="pj-mock-clinic-avatar">{c.emoji}</div>
+                            <div style={{ flex: 1 }}>
+                              <div className="pj-mock-clinic-name">{c.name}</div>
+                              <div className="pj-mock-clinic-dist">📍 {c.dist} · {c.spec}</div>
+                            </div>
+                            <div className="pj-mock-clinic-badge">Open</div>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                    <div style={{ fontSize: ".8rem", color: "rgba(241,237,232,0.5)" }}>2 min walkthrough</div>
                   </div>
                 </div>
-                <div style={{ padding: "24px 28px 28px" }}>
-                  <div
-                    style={{
-                      fontFamily: "var(--font-d)",
-                      fontSize: "1rem",
-                      fontWeight: 700,
-                      color: "var(--text-1)",
-                      marginBottom: 6,
-                    }}
-                  >
-                    Register in under 10 minutes
+
+                {/* Step 2 */}
+                <div className="pj-step" style={{ "--pj-delay": "0.08s" } as React.CSSProperties} onMouseEnter={() => setPjLineStep(1)}>
+                  <div className="pj-step-num">2</div>
+                  <div className="pj-inner pj-inner--rev">
+                    <div className="pj-content">
+                      <div className="pj-step-label">Step 02</div>
+                      <h3 className="pj-step-title">Book or Join the Queue</h3>
+                      <p className="pj-step-desc">Choose your preferred time slot or join the real-time queue. Your token is assigned the moment you confirm — no waiting at the clinic counter.</p>
+                    </div>
+                    <div className="pj-visual">
+                      <div className="pj-mock">
+                        <div style={{ fontSize: ".72rem", fontWeight: 700, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 10 }}>Available Slots — Today</div>
+                        <div className="pj-mock-slots">
+                          {["9:00 AM", "9:30 AM", "10:00 AM", "10:30 AM", "11:00 AM", "11:30 AM"].map((t, i) => (
+                            <div key={t} className={`pj-mock-slot${i === 3 ? " sel" : ""}`}>{t}</div>
+                          ))}
+                        </div>
+                        <div className="pj-mock-book-cta">Confirm Booking </div>
+                      </div>
+                    </div>
                   </div>
-                  <p style={{ fontSize: ".83rem", color: "var(--text-2)", marginBottom: 18, lineHeight: 1.65 }}>
-                    Watch this short walkthrough to see exactly how to set up your clinic — from download to your first booking.
-                  </p>
-                  <a
-                    href="#download"
-                    className="btn btn-primary"
-                    style={{ width: "100%", justifyContent: "center" }}
-                  >
-                    Register Your Clinic Now →
-                  </a>
+                </div>
+
+                {/* Step 3 */}
+                <div className="pj-step" style={{ "--pj-delay": "0.16s" } as React.CSSProperties} onMouseEnter={() => setPjLineStep(2)}>
+                  <div className="pj-step-num">3</div>
+                  <div className="pj-inner">
+                    <div className="pj-content">
+                      <div className="pj-step-label">Step 03</div>
+                      <h3 className="pj-step-title">Track Your Live Token</h3>
+                      <p className="pj-step-desc">Watch the queue progress in real time. You always know exactly how many patients are ahead and when your turn is coming — from anywhere.</p>
+                    </div>
+                    <div className="pj-visual">
+                      <div className="pj-mock">
+                        <div className="pj-mock-token-wrap">
+                          <div className="pj-mock-live-badge"><div className="pj-mock-live-dot" /> Live Queue</div>
+                          <div className="pj-mock-token-label">Your Token Number</div>
+                          <div className="pj-mock-token-num">#QT-402</div>
+                          <div className="pj-mock-token-row"><span className="pj-mock-token-key">Patients ahead</span><span className="pj-mock-token-val">3</span></div>
+                          <div className="pj-mock-token-row"><span className="pj-mock-token-key">Est. wait time</span><span className="pj-mock-token-val">12 min</span></div>
+                          <div className="pj-mock-token-row"><span className="pj-mock-token-key">Your slot</span><span className="pj-mock-token-val" style={{ color: "var(--red)" }}>3:30 PM</span></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Step 4 */}
+                <div className="pj-step" style={{ "--pj-delay": "0.24s" } as React.CSSProperties} onMouseEnter={() => setPjLineStep(3)}>
+                  <div className="pj-step-num">4</div>
+                  <div className="pj-inner pj-inner--rev">
+                    <div className="pj-content">
+                      <div className="pj-step-label">Step 04</div>
+                      <h3 className="pj-step-title">Visit at the Right Time</h3>
+                      <p className="pj-step-desc">Arrive only when it&apos;s your turn. No more sitting in a crowded waiting room for hours. You get a notification 15 minutes before your slot.</p>
+                    </div>
+                    <div className="pj-visual">
+                      <div className="pj-mock">
+                        <div className="pj-mock-time-wrap">
+                          <div className="pj-mock-time-label">Your Appointment</div>
+                          <div className="pj-mock-time-big">3:30 PM</div>
+                          <div className="pj-mock-time-date">Tuesday, 25 June 2026</div>
+                          <div className="pj-mock-time-pill">🔔 Notify me 15 min before</div>
+                          <div style={{ marginTop: 16, padding: "10px 14px", background: "rgba(34,197,94,.08)", borderRadius: "var(--r-sm)", border: "1px solid rgba(34,197,94,.18)", fontSize: ".76rem", color: "#16a34a", fontWeight: 600, fontFamily: "var(--font-d)" }}>✓ You&apos;re on track — no waiting expected</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Step 5 */}
+                <div className="pj-step" style={{ "--pj-delay": "0.32s" } as React.CSSProperties} onMouseEnter={() => setPjLineStep(4)}>
+                  <div className="pj-step-num">5</div>
+                  <div className="pj-inner">
+                    <div className="pj-content">
+                      <div className="pj-step-label">Step 05</div>
+                      <h3 className="pj-step-title">Meet Your Doctor</h3>
+                      <p className="pj-step-desc">Walk in exactly when called. No crowd, no chaos. Your full appointment history and follow-ups are tracked automatically in the app.</p>
+                    </div>
+                    <div className="pj-visual">
+                      <div className="pj-mock">
+                        <div className="pj-mock-doctor-wrap">
+                          <div className="pj-mock-doctor-avatar">👨‍⚕️</div>
+                          <div className="pj-mock-doctor-name">Dr. Ramesh Shah</div>
+                          <div className="pj-mock-doctor-spec">General Physician · Surat</div>
+                          <div className="pj-mock-verified">✓ Verified Doctor</div>
+                          <div className="pj-mock-consult-badge">Consultation Starting </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
+
+              <div style={{ textAlign: "center", marginTop: 64 }}>
+                <a href="#download" className="btn btn-primary btn-lg">Download Patient App — Free</a>
+              </div>
             </div>
+
           </div>
         </section>
 
@@ -885,12 +1030,12 @@ export default function HomePage() {
                   who&apos;s coming and when. The revenue dashboard is a game-changer for me.
                 </p>
                 <div className="testi-author">
-                  <div className="testi-avatar" style={{ background: "rgba(211,48,48,0.1)", color: "var(--red)" }}>RS</div>
+                  <div className="testi-avatar" style={{ background: "rgba(251,44,54,0.1)", color: "var(--red)" }}>RS</div>
                   <div>
                     <div className="testi-name">Dr. Ramesh Shah</div>
                     <div className="testi-role">General Physician · Surat, Gujarat</div>
                   </div>
-                  <span className="testi-type-badge" style={{ background: "rgba(211,48,48,0.08)", color: "var(--red)", border: "1px solid rgba(211,48,48,0.16)" }}>
+                  <span className="testi-type-badge" style={{ background: "rgba(251,44,54,0.08)", color: "var(--red)", border: "1px solid rgba(251,44,54,0.16)" }}>
                     Doctor
                   </span>
                 </div>
@@ -919,12 +1064,12 @@ export default function HomePage() {
                   zero training. I recommend it to every doctor in my network.
                 </p>
                 <div className="testi-author">
-                  <div className="testi-avatar" style={{ background: "rgba(211,48,48,0.1)", color: "var(--red)" }}>AP</div>
+                  <div className="testi-avatar" style={{ background: "rgba(251,44,54,0.1)", color: "var(--red)" }}>AP</div>
                   <div>
                     <div className="testi-name">Dr. Anita Patel</div>
                     <div className="testi-role">Dermatologist · Vadodara, Gujarat</div>
                   </div>
-                  <span className="testi-type-badge" style={{ background: "rgba(211,48,48,0.08)", color: "var(--red)", border: "1px solid rgba(211,48,48,0.16)" }}>
+                  <span className="testi-type-badge" style={{ background: "rgba(251,44,54,0.08)", color: "var(--red)", border: "1px solid rgba(251,44,54,0.16)" }}>
                     Doctor
                   </span>
                 </div>
@@ -993,8 +1138,10 @@ export default function HomePage() {
                 Start with ₹1 per token and upgrade when you&apos;re ready. No hidden fees, no contracts, no surprises.
               </p>
             </div>
-            <div className="pricing-grid reveal">
-              <div className="pricing-card">
+
+            <div className="pricing-grid">
+              {/* Pay Per Token */}
+              <div className="pricing-card" style={{ "--pricing-delay": "0s" } as React.CSSProperties}>
                 <div className="pricing-plan-name">Pay Per Token</div>
                 <div className="pricing-price">
                   <span className="pricing-currency">₹</span>
@@ -1009,12 +1156,14 @@ export default function HomePage() {
                     <li key={f}>{f}</li>
                   ))}
                 </ul>
-                <a href="#download" className="btn btn-secondary" style={{ width: "100%", justifyContent: "center" }}>
+                <a href="#download" className="btn btn-pricing-outline" style={{ width: "100%", justifyContent: "center" }}>
                   Get Started Free
                 </a>
               </div>
-              <div className="pricing-card featured">
-                <div className="pricing-popular">Most Popular</div>
+
+              {/* Monthly Unlimited */}
+              <div className="pricing-card pricing-card--featured" style={{ "--pricing-delay": "0.1s" } as React.CSSProperties}>
+                <div className="pricing-popular-badge">Most Popular</div>
                 <div className="pricing-plan-name">Monthly Unlimited</div>
                 <div className="pricing-price">
                   <span className="pricing-currency">₹</span>
@@ -1029,11 +1178,12 @@ export default function HomePage() {
                     <li key={f}>{f}</li>
                   ))}
                 </ul>
-                <a href="#download" className="btn btn-primary" style={{ width: "100%", justifyContent: "center" }}>
+                <a href="#download" className="btn btn-pricing-featured" style={{ width: "100%", justifyContent: "center" }}>
                   Register Your Clinic
                 </a>
               </div>
             </div>
+
             <p className="pricing-note reveal">
               Patient App is and will always be{" "}
               <strong style={{ color: "var(--text-1)" }}>completely free</strong>. No charges for patients, ever.
@@ -1074,10 +1224,6 @@ export default function HomePage() {
                         <div className="dl-store-badge-label">Get it on</div>
                         <div className="dl-store-badge-name">Google Play</div>
                       </div>
-                      <div className="dl-store-badge-rating">
-                        <div className="dl-store-badge-stars">★★★★★</div>
-                        <div className="dl-store-badge-dl">10K+ downloads</div>
-                      </div>
                     </a>
                   </div>
                 </div>
@@ -1103,10 +1249,6 @@ export default function HomePage() {
                       <div className="dl-store-badge-text">
                         <div className="dl-store-badge-label">Get it on</div>
                         <div className="dl-store-badge-name">Google Play</div>
-                      </div>
-                      <div className="dl-store-badge-rating">
-                        <div className="dl-store-badge-stars">★★★★★</div>
-                        <div className="dl-store-badge-dl">Free download</div>
                       </div>
                     </a>
                   </div>
@@ -1141,7 +1283,7 @@ export default function HomePage() {
                     </div>
                   </a>
                   <a href="mailto:queuetoken@gmail.com" className="contact-channel">
-                    <div className="channel-icon" style={{ background: "rgba(211,48,48,0.09)" }}>✉️</div>
+                    <div className="channel-icon" style={{ background: "rgba(251,44,54,0.09)" }}>✉️</div>
                     <div>
                       <div className="channel-label">Email</div>
                       <div className="channel-value">queuetoken@gmail.com</div>
@@ -1231,8 +1373,7 @@ export default function HomePage() {
                     onClick={submitDemo}
                     type="button"
                   >
-                    Request My Free Demo →
-                  </button>
+                    Request My Free Demo                  </button>
                 </div>
               </div>
             </div>
@@ -1267,7 +1408,7 @@ export default function HomePage() {
                 <li><a href="#doctor-features">Doctor App</a></li>
                 <li><a href="#patient-features">Patient App</a></li>
                 <li><a href="#pricing">Pricing</a></li>
-                <li><a href="#how-it-works">How It Works</a></li>
+                <li><a href="#onboarding" onClick={() => setJourneyTab("doctor")}>How It Works</a></li>
                 <li><a href="#onboarding">Onboarding</a></li>
               </ul>
             </div>
