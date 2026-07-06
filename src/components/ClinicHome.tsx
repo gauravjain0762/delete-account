@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Calendar, MapPin, Phone, ListOrdered, MoreVertical } from "lucide-react";
+import { Calendar, MapPin, Phone, ListOrdered, MoreVertical, XCircle, Hospital } from "lucide-react";
 import { getDoctorInfo, getClinicDoctorIds, dateInfo, type BookingRecord } from "@/lib/queueMock";
 import ClinicSplash from "@/components/ClinicSplash";
 import "@/app/booking.css";
@@ -57,6 +57,19 @@ export default function ClinicHome({ clinicId }: { clinicId: string }) {
   }, [rawSnapshot]);
 
   const activeDoctor = activeBooking ? getDoctorInfo(activeBooking.doctorId) : null;
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [cancelled, setCancelled] = useState(false);
+  const booking = cancelled ? null : activeBooking;
+
+  function cancelAppointment() {
+    if (activeBooking) {
+      try {
+        localStorage.removeItem(`qt_booking_${activeBooking.doctorId}`);
+      } catch {}
+    }
+    setCancelled(true);
+    setMenuOpen(false);
+  }
 
   if (showSplash) {
     return <ClinicSplash />;
@@ -65,7 +78,7 @@ export default function ClinicHome({ clinicId }: { clinicId: string }) {
   return (
     <div className="booking-page">
       <div className="bk-container">
-        {activeBooking && activeDoctor && (
+        {booking && activeDoctor && (
           <>
             <div className="ch-section-row">
               <div className="ch-section-title">Upcoming Appointments</div>
@@ -76,15 +89,29 @@ export default function ClinicHome({ clinicId }: { clinicId: string }) {
               <div className="ch-appt-top">
                 <div className="ch-appt-token-box">
                   <div className="ch-appt-token-label">Your Token</div>
-                  <div className="ch-appt-token-num">{activeBooking.waitListLabel}</div>
+                  <div className="ch-appt-token-num">{booking.waitListLabel}</div>
                 </div>
                 <div className="ch-appt-info">
                   <div className="ch-appt-doctor-name">{activeDoctor.name}</div>
                   <div className="ch-appt-tags">{activeDoctor.specialization}</div>
                 </div>
-                <button type="button" className="ch-appt-menu" aria-label="More options">
-                  <MoreVertical size={18} aria-hidden="true" />
-                </button>
+                <div className="ch-appt-menu-wrap">
+                  <button
+                    type="button"
+                    className="ch-appt-menu"
+                    aria-label="More options"
+                    onClick={() => setMenuOpen((v) => !v)}
+                  >
+                    <MoreVertical size={18} aria-hidden="true" />
+                  </button>
+                  {menuOpen && (
+                    <div className="ch-appt-dropdown">
+                      <button type="button" className="ch-appt-dropdown-item" onClick={cancelAppointment}>
+                        <XCircle size={15} aria-hidden="true" /> Cancel Appointment
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
 
               <div className="ch-appt-divider" />
@@ -94,18 +121,18 @@ export default function ClinicHome({ clinicId }: { clinicId: string }) {
                 <span>Estimated Date &amp; Time:</span>
               </div>
               <div className="ch-appt-datetime-value">
-                {dateInfo(0).dmy} | {activeBooking.expectedTimeLabel}
+                {dateInfo(0).dmy} | {booking.expectedTimeLabel}
               </div>
 
               <div className="ch-appt-current-token">
                 <ListOrdered size={14} aria-hidden="true" />
-                Current Token <strong>{activeBooking.currentServing}</strong>
+                Current Token <strong>{booking.currentServing}</strong>
               </div>
             </div>
           </>
         )}
 
-        <div className="ch-section-title" style={{ marginTop: activeBooking ? 28 : 0, marginBottom: 16 }}>
+        <div className="ch-section-title" style={{ marginTop: booking ? 28 : 0, marginBottom: 16 }}>
           Doctors at this Clinic
         </div>
 
@@ -130,7 +157,7 @@ export default function ClinicHome({ clinicId }: { clinicId: string }) {
                   {info.name} · {info.specialization}
                 </div>
                 <div className="ch-doctor-row">
-                  <span className="ch-emoji" aria-hidden="true">🏥</span> {info.clinicName}
+                  <Hospital size={14} aria-hidden="true" /> {info.clinicName}
                 </div>
                 <div className="ch-doctor-row ch-doctor-row-wrap">
                   <MapPin size={14} aria-hidden="true" />

@@ -65,12 +65,40 @@
   color: var(--text-2);
   margin-top: 2px;
 }
+.booking-page .ch-appt-menu-wrap { position: relative; }
 .booking-page .ch-appt-menu {
   background: none;
   border: none;
   color: var(--text-3);
   cursor: pointer;
   padding: 2px;
+}
+.booking-page .ch-appt-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 6px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-md);
+  z-index: 10;
+  min-width: 190px;
+}
+.booking-page .ch-appt-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 14px;
+  background: var(--red-subtle);
+  border: none;
+  border-radius: var(--r-md);
+  color: var(--red);
+  font-size: .84rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
 }
 .booking-page .ch-appt-divider {
   height: 1px;
@@ -164,7 +192,7 @@
 }
 .booking-page .ch-doctor-row-wrap { align-items: flex-start; }
 .booking-page .ch-doctor-row-wrap svg { margin-top: 2px; flex-shrink: 0; }
-.booking-page .ch-emoji { font-size: .95rem; }
+.booking-page .ch-doctor-row-wrap span { min-width: 0; flex: 1; }
 .booking-page .ch-link {
   color: var(--red);
   font-weight: 600;
