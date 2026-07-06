@@ -1,55 +1,65 @@
 import Link from "next/link";
+import Image from "next/image";
+import "@/app/landing.css";
 
 export default function Footer() {
   return (
-    <footer className="border-t border-black/[0.07] bg-white mt-8">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6 space-y-4">
-        {/* Nav links */}
-        <nav
-          aria-label="Footer navigation"
-          className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm"
-        >
-          <Link
-            href="/doctor/delete-account"
-            className="text-[#E8192C] hover:underline focus:outline-none focus:underline font-medium"
-          >
-            Delete Account
-          </Link>
-          <Link
-            href="/doctor/privacy-policy"
-            className="text-[#E8192C] hover:underline focus:outline-none focus:underline font-medium"
-          >
-            Privacy Policy
-          </Link>
-          <Link
-            href="/doctor/terms-and-conditions"
-            className="text-[#E8192C] hover:underline focus:outline-none focus:underline font-medium"
-          >
-            Terms &amp; Conditions
-          </Link>
-          <a
-            href="mailto:queuetoken@gmail.com"
-            className="text-[#E8192C] hover:underline focus:outline-none focus:underline font-medium"
-          >
-            Support: queuetoken@gmail.com
-          </a>
-        </nav>
-
-        {/* Phone */}
-        <p className="text-center text-sm text-gray-500">
-          Phone:{" "}
-          <a
-            href="tel:+919509647637"
-            className="text-[#E8192C] hover:underline focus:outline-none focus:underline font-medium"
-          >
-            +91 95096 47637
-          </a>
-        </p>
-
-        {/* Copyright */}
-        <p className="text-center text-xs text-gray-400">
-          &copy; 2026 Codetown Technologies &amp; Bliss Technologies
-        </p>
+    <footer className="landing-page lp-footer" role="contentinfo">
+      <div className="lp-container">
+        <div className="footer-grid">
+          <div>
+            <Link href="/" className="nav-logo" style={{ display: "inline-flex", marginBottom: 0 }}>
+              <div className="nav-logo-icon">
+                <Image src="/queuetoken-logo.png" alt="QueueToken logo" width={36} height={36} />
+              </div>
+              Queue<span>Token</span>
+            </Link>
+            <p className="footer-brand-desc">
+              Smart Doctor Appointment &amp; Queue Token Management System. Built for Indian clinics by
+              Codetown Technologies.
+            </p>
+            <div className="footer-social">
+              <div className="social-btn" aria-label="LinkedIn">in</div>
+              <div className="social-btn" aria-label="Twitter">𝕏</div>
+              <div className="social-btn" aria-label="Instagram">▣</div>
+            </div>
+          </div>
+          <div className="footer-col">
+            <h4>Product</h4>
+            <ul>
+              <li><Link href="/#doctor-features">Doctor App</Link></li>
+              <li><Link href="/#patient-features">Patient App</Link></li>
+              <li><Link href="/#pricing">Pricing</Link></li>
+              <li><Link href="/#onboarding">How It Works</Link></li>
+              <li><Link href="/#onboarding">Onboarding</Link></li>
+            </ul>
+          </div>
+          <div className="footer-col">
+            <h4>Company</h4>
+            <ul>
+              <li><Link href="/#contact">About Us</Link></li>
+              <li><Link href="/#contact">Contact</Link></li>
+              <li><Link href="/#contact">Request Demo</Link></li>
+            </ul>
+          </div>
+          <div className="footer-col">
+            <h4>Legal</h4>
+            <ul>
+              <li><Link href="/patient/privacy-policy">Privacy Policy</Link></li>
+              <li><Link href="/patient/terms-and-conditions">Terms &amp; Conditions</Link></li>
+              <li><a href="#">Refund Policy</a></li>
+              <li><a href="#">Cookie Policy</a></li>
+            </ul>
+          </div>
+        </div>
+        <div className="footer-bottom">
+          <span>© 2026 Codetown Technologies. All rights reserved.</span>
+          <div className="footer-bottom-links">
+            <Link href="/patient/privacy-policy">Privacy Policy</Link>
+            <Link href="/patient/terms-and-conditions">Terms &amp; Conditions</Link>
+            <a href="mailto:gaurav@codetowntechnologies.in">gaurav@codetowntechnologies.in</a>
+          </div>
+        </div>
       </div>
     </footer>
   );

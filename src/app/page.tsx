@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import Link from "next/link";
+import Footer from "@/components/Footer";
 import "./landing.css";
 
 const MARQUEE_ITEMS = [
@@ -1360,65 +1360,7 @@ export default function HomePage() {
         </section>
       </main>
 
-      {/* FOOTER */}
-      <footer className="lp-footer" role="contentinfo">
-        <div className="lp-container">
-          <div className="footer-grid">
-            <div>
-              <a href="#" className="nav-logo" style={{ display: "inline-flex", marginBottom: 0 }}>
-                <div className="nav-logo-icon">
-                  <Image src="/queuetoken-logo.png" alt="QueueToken logo" width={36} height={36} />
-                </div>
-                Queue<span>Token</span>
-              </a>
-              <p className="footer-brand-desc">
-                Smart Doctor Appointment &amp; Queue Token Management System. Built for Indian clinics by
-                Codetown Technologies.
-              </p>
-              <div className="footer-social">
-                <div className="social-btn" aria-label="LinkedIn">in</div>
-                <div className="social-btn" aria-label="Twitter">𝕏</div>
-                <div className="social-btn" aria-label="Instagram">▣</div>
-              </div>
-            </div>
-            <div className="footer-col">
-              <h4>Product</h4>
-              <ul>
-                <li><a href="#doctor-features">Doctor App</a></li>
-                <li><a href="#patient-features">Patient App</a></li>
-                <li><a href="#pricing">Pricing</a></li>
-                <li><a href="#onboarding" onClick={() => setJourneyTab("doctor")}>How It Works</a></li>
-                <li><a href="#onboarding">Onboarding</a></li>
-              </ul>
-            </div>
-            <div className="footer-col">
-              <h4>Company</h4>
-              <ul>
-                <li><a href="#contact">About Us</a></li>
-                <li><a href="#contact">Contact</a></li>
-                <li><a href="#contact">Request Demo</a></li>
-              </ul>
-            </div>
-            <div className="footer-col">
-              <h4>Legal</h4>
-              <ul>
-                <li><Link href="/patient/privacy-policy">Privacy Policy</Link></li>
-                <li><Link href="/patient/terms-and-conditions">Terms &amp; Conditions</Link></li>
-                <li><a href="#">Refund Policy</a></li>
-                <li><a href="#">Cookie Policy</a></li>
-              </ul>
-            </div>
-          </div>
-          <div className="footer-bottom">
-            <span>© 2026 Codetown Technologies. All rights reserved.</span>
-            <div className="footer-bottom-links">
-              <Link href="/patient/privacy-policy">Privacy Policy</Link>
-              <Link href="/patient/terms-and-conditions">Terms &amp; Conditions</Link>
-              <a href="mailto:gaurav@codetowntechnologies.in">gaurav@codetowntechnologies.in</a>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
