@@ -74,7 +74,9 @@
   transition: all .22s cubic-bezier(.4, 0, .2, 1);
   letter-spacing: .01em;
   white-space: nowrap;
+  text-decoration: none;
   width: 100%;
+  box-sizing: border-box;
 }
 .booking-page .btn:disabled { opacity: .4; cursor: not-allowed; }
 .booking-page .bk-book-btn { justify-content: space-between; padding: 13px 22px; }
@@ -83,6 +85,16 @@
   background: var(--red);
   color: #fff;
   box-shadow: 0 1px 0 rgba(255,255,255,.1) inset, 0 4px 16px rgba(251,44,54,.3);
+}
+.booking-page .btn-secondary {
+  background: #fff;
+  color: var(--text-1);
+  border: 1px solid var(--border-md);
+  box-shadow: var(--shadow-sm);
+}
+.booking-page .btn-secondary:hover {
+  border-color: var(--border-hi);
+  box-shadow: var(--shadow-md);
 }
 .booking-page .btn-primary:hover:not(:disabled) {
   background: var(--red-lt);
@@ -236,35 +248,6 @@
 }
 .booking-page .bk-confirm-row-address strong { max-width: 65%; }
 
-.booking-page .bk-arrive-banner {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  background: var(--red-subtle);
-  border: 1px solid rgba(251, 44, 54, 0.18);
-  border-radius: var(--r-md);
-  padding: 12px 16px;
-  color: var(--red-dk);
-  font-size: .82rem;
-  font-weight: 600;
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.booking-page .bk-map-preview {
-  height: 140px;
-  border-radius: var(--r-lg);
-  background-color: #141a26;
-  background-image:
-    repeating-linear-gradient(0deg, rgba(255,255,255,.05) 0 1px, transparent 1px 24px),
-    repeating-linear-gradient(90deg, rgba(255,255,255,.05) 0 1px, transparent 1px 24px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.booking-page .bk-map-pin { color: var(--red-lt); }
-
 .booking-page .bk-field { margin-bottom: 18px; }
 .booking-page .bk-label {
   display: block;
@@ -276,6 +259,7 @@
 .booking-page .bk-input,
 .booking-page .bk-textarea {
   width: 100%;
+  box-sizing: border-box;
   padding: 11px 14px;
   border-radius: var(--r-md);
   border: 1px solid var(--border-md);
@@ -310,17 +294,3 @@
   font-size: .88rem;
 }
 .booking-page .bk-phone-row .bk-input { border-radius: 0 var(--r-md) var(--r-md) 0; }
-
-.booking-page .bk-startover {
-  display: block;
-  text-align: center;
-  margin-top: 18px;
-  font-size: .8rem;
-  color: var(--text-3);
-  background: none;
-  border: none;
-  cursor: pointer;
-  text-decoration: underline;
-  width: 100%;
-}
-.booking-page .bk-startover:hover { color: var(--red); }

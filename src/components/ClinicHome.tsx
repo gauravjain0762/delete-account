@@ -132,22 +132,24 @@ export default function ClinicHome({ clinicId }: { clinicId: string }) {
                 <div className="ch-doctor-row">
                   <span className="ch-emoji" aria-hidden="true">🏥</span> {info.clinicName}
                 </div>
-                <div className="ch-doctor-row">
+                <div className="ch-doctor-row ch-doctor-row-wrap">
                   <MapPin size={14} aria-hidden="true" />
-                  <span>{info.address}</span>
-                  <a
-                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(info.address)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="ch-link"
-                  >
-                    Get Direction
-                  </a>
+                  <span>
+                    {info.address}{" "}
+                    <a
+                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(info.address)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="ch-link"
+                    >
+                      Get Direction
+                    </a>
+                  </span>
                 </div>
                 <div className="ch-doctor-row">
                   <Phone size={14} aria-hidden="true" />
                   <span>{info.phone}</span>
-                  <a href={`tel:+91${info.phone}`} className="ch-link ch-link-inline">
+                  <a href={`tel:+91${info.phone}`} className="ch-link">
                     Call Now
                   </a>
                 </div>

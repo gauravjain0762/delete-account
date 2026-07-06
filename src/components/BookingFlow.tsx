@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useSyncExternalStore, useMemo, useId, FormEvent } from "react";
-import { Calendar, Clock, User, Phone, Repeat, CheckCircle2, Loader2, Check, AlertTriangle, MapPin } from "lucide-react";
-import { getDoctorInfo, getSlots, computeQueuePreview, dateInfo, hashSeed, type BookingRecord } from "@/lib/queueMock";
+import Link from "next/link";
+import { Calendar, Clock, User, Phone, Repeat, CheckCircle2, Loader2, Check, Home } from "lucide-react";
+import { getDoctorInfo, getSlots, computeQueuePreview, dateInfo, hashSeed, getClinicIdFromDoctorId, type BookingRecord } from "@/lib/queueMock";
 import "@/app/booking.css";
 
 type Step = "details" | "token";
@@ -19,6 +20,10 @@ export default function BookingFlow({ doctorId }: { doctorId: string }) {
   const doctor = useMemo(() => getDoctorInfo(doctorId), [doctorId]);
   const slots = useMemo(() => getSlots(hashSeed(doctorId || "demo")), [doctorId]);
   const storageKey = `qt_booking_${doctorId}`;
+  const homeHref = useMemo(() => {
+    const clinicId = getClinicIdFromDoctorId(doctorId);
+    return clinicId ? `/c/${clinicId}` : "/";
+  }, [doctorId]);
 
   const rawStored = useSyncExternalStore(
     subscribeNoop,
@@ -59,16 +64,6 @@ export default function BookingFlow({ doctorId }: { doctorId: string }) {
 
   const nameId = useId();
   const phoneId = useId();
-
-  function startOver() {
-    try {
-      localStorage.removeItem(storageKey);
-    } catch {}
-    setSessionBooking(null);
-    setTimeSlot(firstAvailableSlot);
-    setName("");
-    setPhone("");
-  }
 
   function confirmBooking(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -264,17 +259,9 @@ export default function BookingFlow({ doctorId }: { doctorId: string }) {
             </div>
           </div>
 
-          <div className="bk-arrive-banner">
-            <AlertTriangle size={14} aria-hidden="true" /> Please arrive 10 minutes before your appointment time
-          </div>
-
-          <div className="bk-map-preview">
-            <MapPin className="bk-map-pin" size={28} aria-hidden="true" />
-          </div>
-
-          <button type="button" className="bk-startover" onClick={startOver}>
-            Not your appointment? Start over
-          </button>
+          <Link href={homeHref} className="btn btn-secondary">
+            <Home size={16} aria-hidden="true" /> Back to Home
+          </Link>
         </div>
       </div>
     );

@@ -162,40 +162,44 @@
   margin-bottom: 8px;
   flex-wrap: wrap;
 }
+.booking-page .ch-doctor-row-wrap { align-items: flex-start; }
+.booking-page .ch-doctor-row-wrap svg { margin-top: 2px; flex-shrink: 0; }
 .booking-page .ch-emoji { font-size: .95rem; }
 .booking-page .ch-link {
   color: var(--red);
   font-weight: 600;
   text-decoration: underline;
-  margin-left: auto;
+  margin-left: 6px;
   white-space: nowrap;
 }
-.booking-page .ch-link.ch-link-inline { margin-left: 6px; }
 .booking-page .ch-book-btn { margin-top: 8px; }
 
 .booking-page.ch-splash {
+  box-sizing: border-box;
   position: fixed;
   inset: 0;
   z-index: 999;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  background: linear-gradient(160deg, #FF4B54 0%, #E8192C 55%, #B01722 100%);
-  color: #fff;
+  background: linear-gradient(180deg, #FFFFFF 0%, var(--bg-card2) 100%);
+  color: var(--text-1);
   text-align: center;
-  padding: 24px;
+  padding: 24px 24px calc(16px + env(safe-area-inset-bottom, 0px));
+}
+.booking-page.ch-splash .ch-splash-main {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 .booking-page.ch-splash .ch-splash-logo {
-  width: 96px;
-  height: 96px;
-  border-radius: 50%;
-  background: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 20px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  margin-bottom: 16px;
 }
 .booking-page.ch-splash .ch-splash-word {
   display: flex;
@@ -208,25 +212,29 @@
   font-family: var(--font-jakarta), 'Plus Jakarta Sans', sans-serif;
   font-weight: 700;
   font-size: 1.9rem;
-  color: #fff;
+  color: var(--text-1);
 }
 .booking-page.ch-splash .ch-splash-word-token {
   font-family: var(--font-jakarta), 'Plus Jakarta Sans', sans-serif;
   font-weight: 800;
   font-size: 1.4rem;
   letter-spacing: .16em;
-  color: #fff;
+  color: var(--red);
   margin-top: 2px;
 }
 .booking-page.ch-splash .ch-splash-tagline {
   font-size: .95rem;
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--text-2);
   margin: 0;
 }
 .booking-page.ch-splash .ch-splash-footer {
-  position: absolute;
-  bottom: 32px;
+  flex-shrink: 0;
+  padding-top: 16px;
   font-size: .72rem;
-  color: rgba(255, 255, 255, 0.75);
+  color: var(--text-3);
   line-height: 1.6;
+}
+.booking-page.ch-splash .ch-splash-footer-label {
+  color: var(--red);
+  font-weight: 600;
 }

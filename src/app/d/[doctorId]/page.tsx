@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import BookingFlow from "@/components/BookingFlow";
 
 export const metadata: Metadata = {
@@ -21,7 +20,6 @@ export default async function DoctorBookingPage({
       <main className="flex-1">
         <BookingFlow doctorId={doctorId} />
       </main>
-      <Footer />
     </div>
   );
 }

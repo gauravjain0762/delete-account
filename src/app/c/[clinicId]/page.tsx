@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import ClinicHome from "@/components/ClinicHome";
 
 export const metadata: Metadata = {
@@ -21,7 +20,6 @@ export default async function ClinicPage({
       <main className="flex-1">
         <ClinicHome clinicId={clinicId} />
       </main>
-      <Footer />
     </div>
   );
 }

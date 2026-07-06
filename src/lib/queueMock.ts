@@ -83,6 +83,11 @@ export function getClinicDoctorIds(clinicId: string): string[] {
   return [`${clinicId || "demo-clinic"}-doc-0`];
 }
 
+export function getClinicIdFromDoctorId(doctorId: string): string | null {
+  const match = doctorId.match(/^(.*)-doc-\d+$/);
+  return match ? match[1] : null;
+}
+
 export function getSlots(seed: number): SlotOption[] {
   return SLOT_TIMES.map((time, i) => ({
     id: `${i}`,
