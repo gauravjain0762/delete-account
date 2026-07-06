@@ -235,7 +235,7 @@ export default function BookingFlow({ doctorId, clinicId }: { doctorId: string; 
         <div className="bk-container">
           <div className="bk-confirm-icon">
             <div className="bk-confirm-icon-inner">
-              <Check size={30} aria-hidden="true" />
+              <Check size={30} aria-hidden="true" className="bk-confirm-check" />
             </div>
           </div>
 
