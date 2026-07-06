@@ -9,16 +9,19 @@ export const metadata: Metadata = {
 
 export default async function DoctorBookingPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ doctorId: string }>;
+  searchParams: Promise<{ clinicId?: string }>;
 }) {
   const { doctorId } = await params;
+  const { clinicId } = await searchParams;
 
   return (
     <div className="min-h-screen flex flex-col bg-[#FDF8F6]">
       <Header />
       <main className="flex-1">
-        <BookingFlow doctorId={doctorId} />
+        <BookingFlow doctorId={doctorId} clinicId={clinicId ?? ""} />
       </main>
     </div>
   );

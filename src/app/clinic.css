@@ -122,8 +122,9 @@
   margin-left: 20px;
 }
 .booking-page .ch-appt-current-token {
-  display: inline-flex;
+  display: flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
   background: var(--bg-card2);
   border-radius: 100px;
