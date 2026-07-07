@@ -7,3 +7,12 @@ export function dateInfo(offset: number) {
   const displayLabel = `${dmy} (${weekday})`;
   return { iso, weekday, dmy, displayLabel };
 }
+
+export function dateInfoFromIso(iso: string) {
+  const [y, m, d] = iso.slice(0, 10).split("-").map(Number);
+  const date = new Date(y, m - 1, d);
+  const weekday = date.toLocaleDateString("en-IN", { weekday: "long" });
+  const dmy = `${String(d).padStart(2, "0")}/${String(m).padStart(2, "0")}/${y}`;
+  const displayLabel = `${dmy} (${weekday})`;
+  return { iso, weekday, dmy, displayLabel };
+}

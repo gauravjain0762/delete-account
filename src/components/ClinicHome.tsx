@@ -3,11 +3,11 @@
 import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Calendar, MapPin, Hospital, Layers, MoreVertical, XCircle, Loader2, AlertCircle } from "lucide-react";
+import { Calendar, MapPin, Hospital, Database, MoreVertical, XCircle, Loader2, AlertCircle } from "lucide-react";
 import { fetchClinic, fetchAppointment, fetchAppointmentPreview, type ApiClinic, type ApiDoctor, type AppointmentDetails } from "@/lib/api";
-import { bookingKey, parseStoredBooking, removeStoredBooking, type StoredBooking } from "@/lib/booking";
+import { bookingKey, parseStoredBooking, removeStoredBooking, clinicSplashKey, type StoredBooking } from "@/lib/booking";
 import { useQueueSocket } from "@/lib/socket";
-import { dateInfo } from "@/lib/dateUtils";
+import { dateInfoFromIso } from "@/lib/dateUtils";
 import ClinicSplash from "@/components/ClinicSplash";
 import "@/app/booking.css";
 import "@/app/clinic.css";
@@ -22,13 +22,36 @@ function getServerSnapshot(): string {
   return "";
 }
 
+function getSplashShownServerSnapshot(): boolean {
+  return false;
+}
+
 export default function ClinicHome({ clinicId }: { clinicId: string }) {
-  const [showSplash, setShowSplash] = useState(true);
+  const splashKey = clinicSplashKey(clinicId);
+  const splashAlreadyShown = useSyncExternalStore(
+    subscribeNoop,
+    () => {
+      try {
+        return sessionStorage.getItem(splashKey) === "1";
+      } catch {
+        return false;
+      }
+    },
+    getSplashShownServerSnapshot
+  );
+  const [timerElapsed, setTimerElapsed] = useState(false);
+  const showSplash = !splashAlreadyShown && !timerElapsed;
 
   useEffect(() => {
-    const timer = setTimeout(() => setShowSplash(false), SPLASH_DURATION_MS);
+    if (splashAlreadyShown) return;
+    const timer = setTimeout(() => {
+      try {
+        sessionStorage.setItem(splashKey, "1");
+      } catch {}
+      setTimerElapsed(true);
+    }, SPLASH_DURATION_MS);
     return () => clearTimeout(timer);
-  }, []);
+  }, [splashAlreadyShown, splashKey]);
 
   const [loadState, setLoadState] = useState<"loading" | "error" | "ready">("loading");
   const [loadError, setLoadError] = useState("");
@@ -125,6 +148,22 @@ export default function ClinicHome({ clinicId }: { clinicId: string }) {
   });
 
   const displayedAppointment = booking && appointment?.id === booking.appointmentId ? appointment : null;
+  const displayedDoctor = booking ? doctors.find((d) => d.id === booking.doctorId) : undefined;
+  const turnReached = !!(currentToken && displayedAppointment && currentToken.token >= displayedAppointment.tokenNumber);
+
+  // Fallback in case the queue socket misses an update — keeps the current token fresh regardless.
+  useEffect(() => {
+    if (!booking || turnReached) return;
+    const interval = setInterval(() => {
+      fetchAppointmentPreview(booking.doctorId, booking.date, booking.slot)
+        .then((res) => setCurrentToken({ slotNumber: res.slotNumber, token: res.currentToken }))
+        .catch(() => {});
+      fetchAppointment(booking.appointmentId)
+        .then((res) => setAppointment(res.appointment))
+        .catch(() => {});
+    }, 10000);
+    return () => clearInterval(interval);
+  }, [booking, turnReached]);
 
   function cancelAppointment() {
     if (activeBooking) removeStoredBooking(activeBooking.doctorId);
@@ -166,11 +205,10 @@ export default function ClinicHome({ clinicId }: { clinicId: string }) {
   return (
     <div className="booking-page">
       <div className="bk-container">
-        {displayedAppointment && (
+        {displayedAppointment && !turnReached && (
           <>
             <div className="ch-section-row">
               <div className="ch-section-title">Upcoming Appointments</div>
-              <span className="ch-view-all">View all</span>
             </div>
 
             <div className="ch-appt-card">
@@ -181,7 +219,9 @@ export default function ClinicHome({ clinicId }: { clinicId: string }) {
                 </div>
                 <div className="ch-appt-info">
                   <div className="ch-appt-doctor-name">{displayedAppointment.doctor.name}</div>
-                  <div className="ch-appt-tags">{displayedAppointment.slot}</div>
+                  {displayedDoctor && displayedDoctor.services.length > 0 && (
+                    <div className="ch-appt-tags">{displayedDoctor.services.join(" • ")}</div>
+                  )}
                 </div>
                 <div className="ch-appt-menu-wrap">
                   <button
@@ -209,24 +249,23 @@ export default function ClinicHome({ clinicId }: { clinicId: string }) {
                 <span>Estimated Date &amp; Time:</span>
               </div>
               <div className="ch-appt-datetime-value">
-                {dateInfo(0).dmy} | {displayedAppointment.estimatedTime}
+                {dateInfoFromIso(displayedAppointment.date).dmy} | {displayedAppointment.estimatedTime}
               </div>
 
               <div className="ch-appt-current-token">
-                <Layers size={14} aria-hidden="true" />
+                <Database size={14} aria-hidden="true" />
                 Current Token <strong>{currentToken ? `${currentToken.slotNumber} ${currentToken.token}` : "—"}</strong>
               </div>
             </div>
           </>
         )}
 
-        <div className="ch-section-title" style={{ marginTop: booking ? 28 : 0, marginBottom: 16 }}>
-          Doctors at this Clinic
+        <div className="ch-section-title" style={{ marginTop: displayedAppointment && !turnReached ? 28 : 0, marginBottom: 16, textAlign: "center" }}>
+          Welcome to {clinic.clinicName}
         </div>
 
         <div className="ch-doctor-list">
           {doctors.map((doc) => {
-            const onDuty = doc.doctorAvailable && doc.activeStatus === "active";
             return (
               <div key={doc.id} className="ch-doctor-card">
                 <div className="ch-doctor-photo">
@@ -240,9 +279,6 @@ export default function ClinicHome({ clinicId }: { clinicId: string }) {
                       style={{ objectFit: "cover" }}
                     />
                   )}
-                  <span className={`ch-duty-badge${onDuty ? " on" : " off"}`}>
-                    <span className="ch-duty-dot" aria-hidden="true" /> {onDuty ? "ON" : "OFF"}
-                  </span>
                 </div>
                 <div className="ch-doctor-body">
                   <div className="ch-doctor-name">

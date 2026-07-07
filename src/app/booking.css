@@ -98,6 +98,10 @@
 }
 
 .booking-page .bk-app-download {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
   text-align: center;
   font-size: .82rem;
   color: var(--text-2);
@@ -117,18 +121,25 @@
 .booking-page .bk-header-row {
   display: flex;
   align-items: center;
+  gap: 14px;
   margin-bottom: 20px;
+}
+.booking-page .bk-back-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  flex: none;
+  border-radius: 50%;
+  background: #F2F2F2;
+  color: var(--text-1);
 }
 .booking-page .bk-header-title {
   font-family: var(--font-jakarta), 'Plus Jakarta Sans', sans-serif;
-  font-weight: 800;
-  font-size: 1.2rem;
+  font-weight: 700;
+  font-size: 1.05rem;
   color: var(--text-1);
-}
-.booking-page .bk-header-sub {
-  font-size: .85rem;
-  color: var(--text-2);
-  margin-top: 2px;
 }
 
 .booking-page .bk-wait-banner {
@@ -140,31 +151,43 @@
   margin-bottom: 24px;
 }
 .booking-page .bk-wait-line1 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
   font-family: var(--font-jakarta), 'Plus Jakarta Sans', sans-serif;
   font-size: .88rem;
   font-weight: 700;
   color: var(--red);
   margin-bottom: 4px;
 }
-.booking-page .bk-wait-line2 { font-size: .8rem; color: var(--text-2); }
-.booking-page .bk-wait-line2 strong { color: var(--text-1); }
+.booking-page .bk-wait-icon { color: #E3A008; }
+.booking-page .bk-wait-line2 { font-size: .8rem; color: var(--red); opacity: .8; }
+.booking-page .bk-wait-line2 strong { color: var(--red); font-weight: 700; opacity: 1; }
 
 .booking-page .bk-section-heading {
   font-family: var(--font-jakarta), 'Plus Jakarta Sans', sans-serif;
   font-weight: 700;
-  font-size: .78rem;
-  text-transform: uppercase;
-  letter-spacing: .08em;
-  color: var(--text-3);
+  font-size: .95rem;
+  color: var(--text-1);
   text-align: center;
   margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
 }
 
 .booking-page .bk-field-row {
   display: flex;
   gap: 12px;
 }
-.booking-page .bk-field-row .bk-field { flex: 1; }
+.booking-page .bk-field-row .bk-field { flex: 1; min-width: 0; }
+
+@media (max-width: 420px) {
+  .booking-page .bk-field-row {
+    flex-direction: column;
+    gap: 18px;
+  }
+}
 
 .booking-page .bk-icon-label {
   display: flex;
@@ -186,6 +209,9 @@
   appearance: none;
   -webkit-appearance: none;
   box-sizing: border-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .booking-page .bk-select-chevron {
   position: absolute;
@@ -203,6 +229,10 @@
   color: var(--text-2);
   font-size: .86rem;
   border: 1px solid var(--border);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  box-sizing: border-box;
 }
 
 .booking-page .bk-confirm-title,
@@ -210,6 +240,59 @@
   text-align: center;
 }
 .booking-page .bk-confirm-subtitle { margin-bottom: 24px; }
+
+.booking-page .bk-confirm-logo {
+  display: block;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  margin-bottom: 20px;
+}
+.booking-page .bk-confirm-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.booking-page .bk-play-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #000;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 8px;
+  padding: 6px 14px 6px 10px;
+  text-decoration: none;
+  flex: none;
+}
+.booking-page .bk-play-badge-centered {
+  display: flex;
+  width: fit-content;
+  margin: 14px auto 0;
+}
+.booking-page .bk-play-badge-icon {
+  width: 20px;
+  height: 20px;
+  flex: none;
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
+  background: linear-gradient(135deg, #00C6FF 0%, #00E36B 35%, #FFDD55 65%, #FF4B4B 100%);
+}
+.booking-page .bk-play-badge-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+.booking-page .bk-play-badge-eyebrow {
+  font-size: .5rem;
+  letter-spacing: .06em;
+  color: #d6d6d6;
+}
+.booking-page .bk-play-badge-title {
+  font-family: var(--font-jakarta), 'Plus Jakarta Sans', sans-serif;
+  font-size: .92rem;
+  font-weight: 700;
+  color: #fff;
+}
 
 .booking-page .bk-confirm-icon {
   width: 92px;
@@ -289,7 +372,7 @@
 .booking-page .bk-label {
   display: block;
   font-size: .82rem;
-  font-weight: 600;
+  font-weight: 400;
   color: var(--text-1);
   margin-bottom: 6px;
 }

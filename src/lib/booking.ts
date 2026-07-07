@@ -17,7 +17,7 @@ export function parseStoredBooking(raw: string | null): StoredBooking | null {
   try {
     const saved = JSON.parse(raw) as StoredBooking;
     const today = new Date().toLocaleDateString("en-CA");
-    if (saved.date !== today) return null;
+    if (saved.date < today) return null;
     return saved;
   } catch {
     return null;
@@ -37,5 +37,17 @@ export function removeStoredBooking(doctorId: string): void {
     localStorage.removeItem(bookingKey(doctorId));
   } catch {
     // ignore
+  }
+}
+
+export function clinicSplashKey(clinicId: string): string {
+  return `clinic-splash-shown-${clinicId}`;
+}
+
+export function markClinicSplashShown(clinicId: string): void {
+  try {
+    sessionStorage.setItem(clinicSplashKey(clinicId), "1");
+  } catch {
+    // ignore storage failures
   }
 }

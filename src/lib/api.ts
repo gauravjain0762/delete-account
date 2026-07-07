@@ -73,6 +73,14 @@ export interface AppointmentPreviewResponse {
   freeFollowupDays: number;
 }
 
+export interface FreeFollowupResponse {
+  success: boolean;
+  message?: string;
+  freeFollowup: boolean;
+  lastVisitDate?: string;
+  expiresOn?: string;
+}
+
 export interface BookAppointmentPayload {
   doctorId: string;
   date: string;
@@ -155,4 +163,10 @@ export function bookAppointment(payload: BookAppointmentPayload): Promise<BookAp
 
 export function fetchAppointment(appointmentId: string): Promise<GetAppointmentResponse> {
   return apiGet<GetAppointmentResponse>(`/api/patient/appointment/${appointmentId}`);
+}
+
+export function fetchFreeFollowupStatus(doctorId: string, phone: string, date: string): Promise<FreeFollowupResponse> {
+  return apiGet<FreeFollowupResponse>(
+    `/api/patient/doctors/${doctorId}/free-followup-guest?phone=${encodeURIComponent(phone)}&date=${date}`
+  );
 }

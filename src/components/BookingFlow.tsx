@@ -2,21 +2,25 @@
 
 import { useEffect, useMemo, useState, useSyncExternalStore, useId, FormEvent } from "react";
 import Link from "next/link";
-import { Calendar, Clock, User, Phone, Repeat, CheckCircle2, Loader2, Check, Home, AlertCircle, ChevronDown } from "lucide-react";
+import Image from "next/image";
+import { Calendar, Clock, User, Phone, Activity, CheckCircle2, Loader2, Check, Home, AlertCircle, ChevronDown, ArrowLeft, Lightbulb } from "lucide-react";
 import {
   fetchClinic,
   fetchDoctorSlots,
   fetchAppointmentPreview,
+  fetchFreeFollowupStatus,
   bookAppointment,
   fetchAppointment,
   type ApiDoctor,
   type ApiClinic,
   type AppointmentDetails,
 } from "@/lib/api";
-import { bookingKey, parseStoredBooking, saveStoredBooking, removeStoredBooking, type StoredBooking } from "@/lib/booking";
+import { bookingKey, parseStoredBooking, saveStoredBooking, removeStoredBooking, markClinicSplashShown, type StoredBooking } from "@/lib/booking";
 import { useQueueSocket } from "@/lib/socket";
-import { dateInfo } from "@/lib/dateUtils";
+import { dateInfo, dateInfoFromIso } from "@/lib/dateUtils";
 import "@/app/booking.css";
+
+const PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=app.queuetoken&hl=en";
 
 interface Preview {
   slotNumber: string;
@@ -59,22 +63,27 @@ export default function BookingFlow({ doctorId, clinicId }: { doctorId: string; 
   useEffect(() => {
     if (!activeBooking) return;
     let cancelled = false;
-    fetchAppointment(activeBooking.appointmentId)
-      .then((res) => {
-        if (cancelled) return;
-        if (res.appointment.status === "cancelled") {
-          removeStoredBooking(doctorId);
-          setSessionBooking(null);
-          return;
-        }
-        setAppointment(res.appointment);
-      })
-      .catch((err: Error) => {
-        if (cancelled) return;
+    Promise.allSettled([
+      fetchAppointment(activeBooking.appointmentId),
+      fetchAppointmentPreview(activeBooking.doctorId, activeBooking.date, activeBooking.slot),
+    ]).then(([apptResult, previewResult]) => {
+      if (cancelled) return;
+      if (apptResult.status === "rejected") {
         removeStoredBooking(doctorId);
         setSessionBooking(null);
-        setAppointmentError(err.message || "Could not load your appointment.");
-      });
+        setAppointmentError(apptResult.reason instanceof Error ? apptResult.reason.message : "Could not load your appointment.");
+        return;
+      }
+      const appt = apptResult.value.appointment;
+      const currentToken = previewResult.status === "fulfilled" ? previewResult.value.currentToken : null;
+      const turnReached = currentToken !== null && currentToken >= appt.tokenNumber;
+      if (appt.status === "cancelled" || turnReached) {
+        removeStoredBooking(doctorId);
+        setSessionBooking(null);
+        return;
+      }
+      setAppointment(appt);
+    });
     return () => {
       cancelled = true;
     };
@@ -83,9 +92,21 @@ export default function BookingFlow({ doctorId, clinicId }: { doctorId: string; 
   useQueueSocket(doctorId, activeBooking?.slot ?? "", activeBooking?.appointmentId ?? "", {
     onQueueUpdated: () => {
       if (!activeBooking) return;
-      fetchAppointment(activeBooking.appointmentId)
-        .then((res) => setAppointment(res.appointment))
-        .catch(() => {});
+      Promise.allSettled([
+        fetchAppointment(activeBooking.appointmentId),
+        fetchAppointmentPreview(activeBooking.doctorId, activeBooking.date, activeBooking.slot),
+      ]).then(([apptResult, previewResult]) => {
+        if (apptResult.status !== "fulfilled") return;
+        const appt = apptResult.value.appointment;
+        const currentToken = previewResult.status === "fulfilled" ? previewResult.value.currentToken : null;
+        const turnReached = currentToken !== null && currentToken >= appt.tokenNumber;
+        if (appt.status === "cancelled" || turnReached) {
+          removeStoredBooking(doctorId);
+          setSessionBooking(null);
+          return;
+        }
+        setAppointment(appt);
+      });
     },
     onPaid: () => {
       setAppointment((prev) => (prev ? { ...prev, status: "paid" } : prev));
@@ -101,6 +122,7 @@ export default function BookingFlow({ doctorId, clinicId }: { doctorId: string; 
   const [loadError, setLoadError] = useState("");
   const [clinic, setClinic] = useState<ApiClinic | null>(null);
   const [doctor, setDoctor] = useState<ApiDoctor | null>(null);
+  const [activeDate, setActiveDate] = useState(today);
   const [slotOptions, setSlotOptions] = useState<string[]>([]);
   const [timeSlot, setTimeSlot] = useState("");
 
@@ -113,9 +135,33 @@ export default function BookingFlow({ doctorId, clinicId }: { doctorId: string; 
   const [formErrors, setFormErrors] = useState<{ name?: string; phone?: string }>({});
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
+  const [freeFollowupResult, setFreeFollowupResult] = useState(false);
 
   const nameId = useId();
   const phoneId = useId();
+
+  const phoneReady = phone.length === 10;
+  const freeFollowup = phoneReady && freeFollowupResult;
+
+  useEffect(() => {
+    if (activeBooking || !phoneReady) return;
+    let cancelled = false;
+    const timer = setTimeout(() => {
+      fetchFreeFollowupStatus(doctorId, phone, activeDate.iso)
+        .then((res) => {
+          if (cancelled) return;
+          setFreeFollowupResult(res.freeFollowup);
+        })
+        .catch(() => {
+          if (cancelled) return;
+          setFreeFollowupResult(false);
+        });
+    }, 450);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [activeBooking, doctorId, phone, activeDate.iso, phoneReady]);
 
   useEffect(() => {
     if (activeBooking || !clinicId) return;
@@ -131,10 +177,18 @@ export default function BookingFlow({ doctorId, clinicId }: { doctorId: string; 
         }
         setClinic(clinicRes.clinic);
         setDoctor(foundDoctor);
-        const todayEntry = slotsRes.slots.find((s) => s.date === today.iso);
-        const available = todayEntry?.availableSlots ?? [];
-        setSlotOptions(available);
-        setTimeSlot(available[0] ?? "");
+        const sortedDays = [...slotsRes.slots].sort((a, b) => a.date.localeCompare(b.date));
+        const nextAvailable = sortedDays.find((s) => s.availableSlots.length > 0);
+        if (nextAvailable) {
+          setActiveDate(dateInfoFromIso(nextAvailable.date));
+          setSlotOptions(nextAvailable.availableSlots);
+          setTimeSlot(nextAvailable.availableSlots[0] ?? "");
+        } else {
+          const todayEntry = sortedDays.find((s) => s.date === today.iso);
+          setActiveDate(today);
+          setSlotOptions(todayEntry?.availableSlots ?? []);
+          setTimeSlot("");
+        }
         setLoadState("ready");
       })
       .catch((err: Error) => {
@@ -150,7 +204,7 @@ export default function BookingFlow({ doctorId, clinicId }: { doctorId: string; 
   useEffect(() => {
     if (activeBooking || !timeSlot) return;
     let cancelled = false;
-    fetchAppointmentPreview(doctorId, today.iso, timeSlot)
+    fetchAppointmentPreview(doctorId, activeDate.iso, timeSlot)
       .then((res) => {
         if (cancelled) return;
         setPreview({
@@ -169,7 +223,7 @@ export default function BookingFlow({ doctorId, clinicId }: { doctorId: string; 
     return () => {
       cancelled = true;
     };
-  }, [activeBooking, doctorId, timeSlot, today.iso]);
+  }, [activeBooking, doctorId, timeSlot, activeDate.iso]);
 
   function confirmBooking(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -187,7 +241,7 @@ export default function BookingFlow({ doctorId, clinicId }: { doctorId: string; 
 
     bookAppointment({
       doctorId,
-      date: today.iso,
+      date: activeDate.iso,
       slot: timeSlot,
       fullName: name.trim(),
       phone: phoneDigits,
@@ -201,7 +255,7 @@ export default function BookingFlow({ doctorId, clinicId }: { doctorId: string; 
           tokenNumber: res.tokenNumber,
           slotNumber: res.slotNumber,
           slot: timeSlot,
-          date: today.iso,
+          date: activeDate.iso,
           doctorId,
         };
         saveStoredBooking(stored);
@@ -233,6 +287,16 @@ export default function BookingFlow({ doctorId, clinicId }: { doctorId: string; 
     return (
       <div className="booking-page">
         <div className="bk-container">
+          <a
+            href={PLAY_STORE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Open QueueToken app"
+            className="bk-confirm-logo"
+          >
+            <Image src="/queuetoken-logo.png" alt="QueueToken" width={40} height={40} priority />
+          </a>
+
           <div className="bk-confirm-icon">
             <div className="bk-confirm-icon-inner">
               <Check size={30} aria-hidden="true" className="bk-confirm-check" />
@@ -250,11 +314,7 @@ export default function BookingFlow({ doctorId, clinicId }: { doctorId: string; 
 
             <div className="bk-confirm-row">
               <span>Date</span>
-              <strong>{today.dmy}</strong>
-            </div>
-            <div className="bk-confirm-row">
-              <span>Slot</span>
-              <strong>{appointment.slot}</strong>
+              <strong>{dateInfoFromIso(appointment.date).dmy}</strong>
             </div>
             <div className="bk-confirm-row">
               <span>Estimated Time</span>
@@ -274,16 +334,36 @@ export default function BookingFlow({ doctorId, clinicId }: { doctorId: string; 
             </div>
           </div>
 
-          <Link href={homeHref} className="btn btn-secondary">
+          <Link
+            href={homeHref}
+            className="btn btn-secondary"
+            onClick={() => {
+              if (clinicId) markClinicSplashShown(clinicId);
+            }}
+          >
             <Home size={16} aria-hidden="true" /> Back to Home
           </Link>
 
           <p className="bk-app-download">
-            Download our app and {" "}
-            <a href="https://play.google.com/store/apps/details?id=app.queuetoken&hl=en" target="_blank" rel="noopener noreferrer">
-              track your appointment live
+            Download our app {" "}
+            <a href={PLAY_STORE_URL} target="_blank" rel="noopener noreferrer">
+              to get more facilites
             </a>
           </p>
+
+          <a
+            href={PLAY_STORE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Get it on Google Play"
+            className="bk-play-badge bk-play-badge-centered"
+          >
+            <span className="bk-play-badge-icon" aria-hidden="true" />
+            <span className="bk-play-badge-text">
+              <span className="bk-play-badge-eyebrow">GET IT ON</span>
+              <span className="bk-play-badge-title">Google Play</span>
+            </span>
+          </a>
         </div>
       </div>
     );
@@ -327,26 +407,28 @@ export default function BookingFlow({ doctorId, clinicId }: { doctorId: string; 
     <div className="booking-page">
       <div className="bk-container">
         <div className="bk-header-row">
-          <div className="bk-header-titles">
-            <div className="bk-header-title">Book Appointment</div>
-            <div className="bk-header-sub">with {doctor.name}</div>
-          </div>
+          <Link href={homeHref} aria-label="Go back" className="bk-back-btn">
+            <ArrowLeft size={18} aria-hidden="true" />
+          </Link>
+          <div className="bk-header-title">Book Appointment</div>
         </div>
+
+        <div className="bk-section-heading">Fill Your Details</div>
 
         <div className="bk-wait-banner">
           {slotOptions.length === 0 ? (
-            <div className="bk-wait-line1">No slots available today</div>
+            <div className="bk-wait-line1">No slots available</div>
           ) : previewLoading || !preview ? (
             <div className="bk-wait-line1">Loading queue status…</div>
           ) : (
             <>
-              <div className="bk-wait-line1">Your token {preview.slotNumber} {preview.yourToken}</div>
+              <div className="bk-wait-line1">
+                <Lightbulb size={14} aria-hidden="true" className="bk-wait-icon" /> Your wait list {preview.yourToken}
+              </div>
               <div className="bk-wait-line2">Expected appointment time <strong>{preview.estimatedTime}</strong></div>
             </>
           )}
         </div>
-
-        <div className="bk-section-heading">Fill Patient Details</div>
 
         <form onSubmit={confirmBooking} noValidate className="bk-card">
           {submitError && (
@@ -360,7 +442,7 @@ export default function BookingFlow({ doctorId, clinicId }: { doctorId: string; 
               <label className="bk-label bk-icon-label">
                 <Calendar size={14} aria-hidden="true" /> Date <span aria-hidden="true" style={{ color: "#FB2C36" }}>*</span>
               </label>
-              <div className="bk-readonly">{today.displayLabel}</div>
+              <div className="bk-readonly">{activeDate.displayLabel}</div>
             </div>
             <div className="bk-field">
               <label htmlFor="bk-time-slot" className="bk-label bk-icon-label">
@@ -368,7 +450,7 @@ export default function BookingFlow({ doctorId, clinicId }: { doctorId: string; 
               </label>
               <div className="bk-select-wrap">
                 {slotOptions.length === 0 ? (
-                  <div className="bk-readonly">No slots today</div>
+                  <div className="bk-readonly">No slots available</div>
                 ) : (
                   <>
                     <select
@@ -435,7 +517,7 @@ export default function BookingFlow({ doctorId, clinicId }: { doctorId: string; 
 
           <div className="bk-field">
             <label className="bk-label bk-icon-label">
-              <Repeat size={14} aria-hidden="true" /> Free Follow up Days
+              <Activity size={14} aria-hidden="true" /> Free Follow up Days
             </label>
             <div className="bk-readonly">{clinic.freeFollowupDays} days</div>
           </div>
@@ -449,7 +531,7 @@ export default function BookingFlow({ doctorId, clinicId }: { doctorId: string; 
               {submitting ? <Loader2 size={16} className="animate-spin" aria-hidden="true" /> : <CheckCircle2 size={16} aria-hidden="true" />}
               {submitting ? "Booking…" : "Book Now"}
             </span>
-            <span>₹{doctor.consultationFee || clinic.consultationFee}</span>
+            {freeFollowup ? <span>Free Follow up</span> : <span>₹{doctor.consultationFee || clinic.consultationFee}</span>}
           </button>
         </form>
       </div>
