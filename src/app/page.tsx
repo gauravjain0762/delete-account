@@ -1122,7 +1122,7 @@ export default function HomePage() {
                 <div className="pricing-plan-name">Monthly Unlimited</div>
                 <div className="pricing-price">
                   <span className="pricing-currency">₹</span>
-                  <span className="pricing-amount">5,000</span>
+                  <span className="pricing-amount">1,000</span>
                   <span className="pricing-period">/ month</span>
                 </div>
                 <p className="pricing-desc">
