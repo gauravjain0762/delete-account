@@ -1126,10 +1126,6 @@ export default function BookADemoPage() {
               </div>
             </div>
 
-            <p className="pricing-note reveal">
-              Patient App is and will always be{" "}
-              <strong style={{ color: "var(--text-1)" }}>completely free</strong>. No charges for patients, ever.
-            </p>
           </div>
         </section>
 
@@ -1137,7 +1133,7 @@ export default function BookADemoPage() {
         <section id="cta" aria-labelledby="cta-heading">
           <div className="lp-container">
             <div className="download-inner reveal" style={{ textAlign: "center" }}>
-              <h2 style={{ marginBottom: 16 }} id="cta-heading">
+              <h2 className="cta-heading" style={{ marginBottom: 16 }} id="cta-heading">
                 Ready to transform your clinic?
               </h2>
               <p className="download-subtitle">Book a demo with our team today</p>
