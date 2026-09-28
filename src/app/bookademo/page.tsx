@@ -26,8 +26,6 @@ const GOOGLE_PLAY_SVG = (
 );
 
 export default function BookADemoPage() {
-  const [scrolled, setScrolled] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
   const [activeOnbStep, setActiveOnbStep] = useState(0);
   const [journeyTab, setJourneyTab] = useState<"doctor" | "patient">("doctor");
   const [pjLineStep, setPjLineStep] = useState(-1);
@@ -40,12 +38,6 @@ export default function BookADemoPage() {
   const statsAnimated = useRef(false);
   const onbRef = useRef<HTMLElement>(null);
   const onbVisible = useRef(false);
-
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 40);
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   useEffect(() => {
     observerRef.current = new IntersectionObserver(
@@ -101,8 +93,6 @@ export default function BookADemoPage() {
     return () => observer.disconnect();
   }, []);
 
-  const closeMobile = () => setMobileOpen(false);
-
   const submitDemo = async () => {
     const { name, phone, clinic, city, message } = form;
     if (!name || !phone) {
@@ -140,52 +130,6 @@ export default function BookADemoPage() {
 
   return (
     <div className="landing-page">
-      {/* NAV */}
-      <nav className={`lp-nav${scrolled ? " scrolled" : ""}`} id="navbar" role="banner">
-        <div className="nav-inner">
-          <a href="#" className="nav-logo" aria-label="QueueToken Home">
-            <div className="nav-logo-icon">
-              <Image src="/queuetoken-logo.png" alt="QueueToken logo" width={36} height={36} />
-            </div>
-          </a>
-          <div className="nav-links" role="navigation" aria-label="Main navigation">
-            <a href="#problem">Problem</a>
-            <a href="#doctor-features">For Doctors</a>
-            <a href="#patient-features">For Patients</a>
-            <a href="#onboarding" onClick={() => setJourneyTab("doctor")}>How It Works</a>
-            <a href="#pricing">Pricing</a>
-            <a href="#contact">Contact</a>
-          </div>
-          <div className="nav-cta">
-            <a href="#contact" className="btn btn-secondary" style={{ padding: "9px 20px", fontSize: ".82rem" }}>
-              Request Demo
-            </a>
-            <a href="#download" className="btn btn-primary" style={{ padding: "9px 20px", fontSize: ".82rem" }}>
-              Download App
-            </a>
-          </div>
-          <button
-            className="hamburger"
-            onClick={() => setMobileOpen(!mobileOpen)}
-            aria-label="Open menu"
-          >
-            <span />
-            <span />
-            <span />
-          </button>
-        </div>
-      </nav>
-
-      <div className={`mobile-menu${mobileOpen ? " open" : ""}`} role="navigation">
-        <a href="#problem" onClick={closeMobile}>Problem</a>
-        <a href="#doctor-features" onClick={closeMobile}>For Doctors</a>
-        <a href="#patient-features" onClick={closeMobile}>For Patients</a>
-        <a href="#onboarding" onClick={() => { setJourneyTab("doctor"); closeMobile(); }}>How It Works</a>
-        <a href="#pricing" onClick={closeMobile}>Pricing</a>
-        <a href="#contact" onClick={closeMobile}>Contact</a>
-        <a href="#download" className="btn btn-primary" onClick={closeMobile}>Download App</a>
-      </div>
-
       <main>
         {/* HERO */}
         <section id="hero" aria-labelledby="hero-heading">
@@ -217,33 +161,21 @@ export default function BookADemoPage() {
                     <div className="hero-cta-label">Are you a Doctor or Clinic?</div>
                     <div className="hero-cta-row">
                       <a
-                        href="#download"
+                        href="https://calendly.com/queuetoken/book-a-demo"
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="btn btn-primary btn-lg"
-                        style={{ flex: 1, justifyContent: "center" }}
+                        style={{ flex: 1, justifyContent: "center", display: "inline-flex", alignItems: "center", gap: "8px" }}
                       >
-                        Register Your Clinic
-                      </a>
-                      <a href="#onboarding" className="btn btn-secondary btn-lg">
-                        See How
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                          <line x1="16" y1="2" x2="16" y2="6"/>
+                          <line x1="8" y1="2" x2="8" y2="6"/>
+                          <line x1="3" y1="10" x2="21" y2="10"/>
+                        </svg>
+                        Book a Demo
                       </a>
                     </div>
-                  </div>
-                  <div className="hero-divider">
-                    <div className="hero-divider-line" />
-                    <span className="hero-divider-text">or</span>
-                    <div className="hero-divider-line" />
-                  </div>
-                  <div className="hero-cta-block">
-                    <div className="hero-cta-label">Looking to book an appointment?</div>
-                    <a
-                      href="https://play.google.com/store/apps/details?id=app.queuetoken&pcampaignid=web_share"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn btn-ghost btn-lg"
-                      style={{ width: "100%", justifyContent: "center" }}
-                    >
-                      Download Patient App — Free
-                    </a>
                   </div>
                 </div>
               </div>
@@ -365,6 +297,17 @@ export default function BookADemoPage() {
                 </div>
               </div>
             </div>
+            <div style={{ textAlign: "center", marginTop: 40 }}>
+              <a href="https://calendly.com/queuetoken/book-a-demo" target="_blank" rel="noopener noreferrer" className="btn btn-primary" style={{ display: "inline-flex", alignItems: "center", gap: "8px" }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                  <line x1="16" y1="2" x2="16" y2="6"/>
+                  <line x1="8" y1="2" x2="8" y2="6"/>
+                  <line x1="3" y1="10" x2="21" y2="10"/>
+                </svg>
+                Book a Demo
+              </a>
+            </div>
           </div>
         </section>
 
@@ -425,6 +368,17 @@ export default function BookADemoPage() {
                   ))}
                 </ul>
               </div>
+            </div>
+            <div style={{ textAlign: "center", marginTop: 40 }}>
+              <a href="https://calendly.com/queuetoken/book-a-demo" target="_blank" rel="noopener noreferrer" className="btn btn-primary" style={{ display: "inline-flex", alignItems: "center", gap: "8px" }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                  <line x1="16" y1="2" x2="16" y2="6"/>
+                  <line x1="8" y1="2" x2="8" y2="6"/>
+                  <line x1="3" y1="10" x2="21" y2="10"/>
+                </svg>
+                Book a Demo
+              </a>
             </div>
           </div>
         </section>
@@ -638,6 +592,17 @@ export default function BookADemoPage() {
                 </div>
               </div>
             </div>
+            <div style={{ textAlign: "center", marginTop: 40 }}>
+              <a href="https://calendly.com/queuetoken/book-a-demo" target="_blank" rel="noopener noreferrer" className="btn btn-primary" style={{ display: "inline-flex", alignItems: "center", gap: "8px" }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                  <line x1="16" y1="2" x2="16" y2="6"/>
+                  <line x1="8" y1="2" x2="8" y2="6"/>
+                  <line x1="3" y1="10" x2="21" y2="10"/>
+                </svg>
+                Book a Demo
+              </a>
+            </div>
           </div>
         </section>
 
@@ -796,6 +761,17 @@ export default function BookADemoPage() {
               </div>
             </div>
 
+            <div style={{ textAlign: "center", marginTop: 40 }}>
+              <a href="https://calendly.com/queuetoken/book-a-demo" target="_blank" rel="noopener noreferrer" className="btn btn-primary" style={{ display: "inline-flex", alignItems: "center", gap: "8px" }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                  <line x1="16" y1="2" x2="16" y2="6"/>
+                  <line x1="8" y1="2" x2="8" y2="6"/>
+                  <line x1="3" y1="10" x2="21" y2="10"/>
+                </svg>
+                Book a Demo
+              </a>
+            </div>
           </div>
         </section>
 
@@ -882,7 +858,15 @@ export default function BookADemoPage() {
                   <div style={{ padding: "24px 28px 28px" }}>
                     <div style={{ fontFamily: "var(--font-d)", fontSize: "1rem", fontWeight: 700, color: "var(--text-1)", marginBottom: 6 }}>Register in under 10 minutes</div>
                     <p style={{ fontSize: ".81rem", color: "var(--text-2)", marginBottom: 18, lineHeight: 1.6 }}>Watch this short walkthrough to see exactly how to set up your clinic — from download to your first booking.</p>
-                    <a href="#download" className="btn btn-primary" style={{ width: "100%", justifyContent: "center" }}>Register Your Clinic Now </a>
+                    <a href="https://calendly.com/queuetoken/book-a-demo" target="_blank" rel="noopener noreferrer" className="btn btn-primary" style={{ width: "100%", justifyContent: "center", display: "inline-flex", alignItems: "center", gap: "8px" }}>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                        <line x1="16" y1="2" x2="16" y2="6"/>
+                        <line x1="8" y1="2" x2="8" y2="6"/>
+                        <line x1="3" y1="10" x2="21" y2="10"/>
+                      </svg>
+                      Book a Demo
+                    </a>
                   </div>
                 </div>
               </div>
@@ -1023,7 +1007,15 @@ export default function BookADemoPage() {
               </div>
 
               <div style={{ textAlign: "center", marginTop: 64 }}>
-                <a href="https://play.google.com/store/apps/details?id=app.queuetoken&pcampaignid=web_share" target="_blank" rel="noopener noreferrer" className="btn btn-primary btn-lg">Download Patient App — Free</a>
+                <a href="https://calendly.com/queuetoken/book-a-demo" target="_blank" rel="noopener noreferrer" className="btn btn-primary btn-lg" style={{ display: "inline-flex", alignItems: "center", gap: "8px" }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
+                  </svg>
+                  Book a Demo
+                </a>
               </div>
             </div>
 
@@ -1078,6 +1070,17 @@ export default function BookADemoPage() {
                 </div>
               </div>
             </div>
+            <div style={{ textAlign: "center", marginTop: 40 }}>
+              <a href="https://calendly.com/queuetoken/book-a-demo" target="_blank" rel="noopener noreferrer" className="btn btn-primary" style={{ display: "inline-flex", alignItems: "center", gap: "8px" }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                  <line x1="16" y1="2" x2="16" y2="6"/>
+                  <line x1="8" y1="2" x2="8" y2="6"/>
+                  <line x1="3" y1="10" x2="21" y2="10"/>
+                </svg>
+                Book a Demo
+              </a>
+            </div>
           </div>
         </section>
 
@@ -1094,9 +1097,10 @@ export default function BookADemoPage() {
               </p>
             </div>
 
-            <div className="pricing-grid">
+            <div className="pricing-grid" style={{ display: "flex", width: "100%", justifyContent: "flex-end" }}>
               {/* Pay Per Token */}
-              <div className="pricing-card" style={{ "--pricing-delay": "0s" } as React.CSSProperties}>
+              <div className="pricing-card pricing-card--featured" style={{ "--pricing-delay": "0s", marginRight: "20%", maxWidth: "450px" } as React.CSSProperties}>
+                <div className="pricing-popular-badge">Most Popular</div>
                 <div className="pricing-plan-name">Pay Per Token</div>
                 <div className="pricing-price">
                   <span className="pricing-currency">₹</span>
@@ -1111,30 +1115,14 @@ export default function BookADemoPage() {
                     <li key={f}>{f}</li>
                   ))}
                 </ul>
-                <a href="#download" className="btn btn-pricing-outline" style={{ width: "100%", justifyContent: "center" }}>
-                  Get Started Free
-                </a>
-              </div>
-
-              {/* Monthly Unlimited */}
-              <div className="pricing-card pricing-card--featured" style={{ "--pricing-delay": "0.1s" } as React.CSSProperties}>
-                <div className="pricing-popular-badge">Most Popular</div>
-                <div className="pricing-plan-name">Monthly Unlimited</div>
-                <div className="pricing-price">
-                  <span className="pricing-currency">₹</span>
-                  <span className="pricing-amount">1,000</span>
-                  <span className="pricing-period">/ month</span>
-                </div>
-                <p className="pricing-desc">
-                  Unlimited tokens for 30 days. Best for busy clinics seeing 20+ patients daily. Predictable cost, unlimited growth.
-                </p>
-                <ul className="pricing-features">
-                  {["Unlimited appointment tokens for 30 days", "Priority 24×7 support", "Advanced revenue reports", "Team / staff access management", "Early access to new features", "Dedicated onboarding assistance"].map((f) => (
-                    <li key={f}>{f}</li>
-                  ))}
-                </ul>
-                <a href="#download" className="btn btn-pricing-featured" style={{ width: "100%", justifyContent: "center" }}>
-                  Register Your Clinic
+                <a href="https://calendly.com/queuetoken/book-a-demo" target="_blank" rel="noopener noreferrer" className="btn btn-pricing-featured" style={{ width: "100%", justifyContent: "center", display: "inline-flex", alignItems: "center", gap: "8px" }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
+                  </svg>
+                  Book a Demo
                 </a>
               </div>
             </div>
@@ -1146,68 +1134,24 @@ export default function BookADemoPage() {
           </div>
         </section>
 
-        {/* DOWNLOAD */}
-        <section id="download" aria-labelledby="download-heading">
+        {/* CTA */}
+        <section id="cta" aria-labelledby="cta-heading">
           <div className="lp-container">
-            <div className="download-inner reveal">
-              <div className="section-label" style={{ justifyContent: "center" }}>Download Now</div>
-              <h2 style={{ marginBottom: 16 }} id="download-heading">
-                Join clinics already running smarter
+            <div className="download-inner reveal" style={{ textAlign: "center" }}>
+              <h2 style={{ marginBottom: 16 }} id="cta-heading">
+                Ready to transform your clinic?
               </h2>
-              <p className="download-subtitle">Available on Android. Free to download. Start today.</p>
-              <div className="download-apps">
-                <div className="dl-card doctor">
-                  <div className="dl-card-header">
-                    <div className="dl-app-logo">
-                      <Image src="/queuetoken-logo.png" alt="QueueToken Doctor App" width={56} height={56} style={{ objectFit: "contain" }} />
-                    </div>
-                    <div className="dl-app-meta">
-                      <div className="dl-app-type">For Doctors &amp; Clinics</div>
-                      <div className="dl-app-name">Queue Token Doctor</div>
-                      <div className="dl-app-tagline">Manage your clinic smarter</div>
-                    </div>
-                  </div>
-                  <div className="dl-tags">
-                    {["Queue Management", "Revenue Dashboard", "Patient Bookings", "UPI Payments"].map((t) => (
-                      <span key={t} className="dl-tag">{t}</span>
-                    ))}
-                  </div>
-                  <div className="dl-store-btns">
-                    <a href="https://play.google.com/store/apps/details?id=app.queuetoken.doctors&pcampaignid=web_share" target="_blank" rel="noopener noreferrer" className="dl-store-badge" aria-label="Download Doctor App on Google Play">
-                      <div className="dl-store-badge-icon">{GOOGLE_PLAY_SVG}</div>
-                      <div className="dl-store-badge-text">
-                        <div className="dl-store-badge-label">Get it on</div>
-                        <div className="dl-store-badge-name">Google Play</div>
-                      </div>
-                    </a>
-                  </div>
-                </div>
-                <div className="dl-card patient">
-                  <div className="dl-card-header">
-                    <div className="dl-app-logo">
-                      <Image src="/queuetoken-logo.png" alt="QueueToken Patient App" width={56} height={56} style={{ objectFit: "contain" }} />
-                    </div>
-                    <div className="dl-app-meta">
-                      <div className="dl-app-type">For Patients — Always Free</div>
-                      <div className="dl-app-name">Queue Token</div>
-                      <div className="dl-app-tagline">Book in under 60 seconds</div>
-                    </div>
-                  </div>
-                  <div className="dl-tags">
-                    {["Real-Time Token", "QR Booking", "Live Queue Track", "Always Free"].map((t) => (
-                      <span key={t} className="dl-tag">{t}</span>
-                    ))}
-                  </div>
-                  <div className="dl-store-btns">
-                    <a href="https://play.google.com/store/apps/details?id=app.queuetoken&pcampaignid=web_share" target="_blank" rel="noopener noreferrer" className="dl-store-badge" aria-label="Download Patient App on Google Play">
-                      <div className="dl-store-badge-icon">{GOOGLE_PLAY_SVG}</div>
-                      <div className="dl-store-badge-text">
-                        <div className="dl-store-badge-label">Get it on</div>
-                        <div className="dl-store-badge-name">Google Play</div>
-                      </div>
-                    </a>
-                  </div>
-                </div>
+              <p className="download-subtitle">Book a demo with our team today</p>
+              <div style={{ marginTop: 32 }}>
+                <a href="https://calendly.com/queuetoken/book-a-demo" target="_blank" rel="noopener noreferrer" className="btn btn-primary btn-lg" style={{ display: "inline-flex", alignItems: "center", gap: "8px" }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
+                  </svg>
+                  Book a Demo
+                </a>
               </div>
             </div>
           </div>
@@ -1344,12 +1288,24 @@ export default function BookADemoPage() {
                       )}
                       <button
                         className="btn btn-primary"
-                        style={{ width: "100%", justifyContent: "center", opacity: formStatus === "submitting" ? 0.7 : 1 }}
+                        style={{ width: "100%", justifyContent: "center", display: "inline-flex", alignItems: "center", gap: "8px", opacity: formStatus === "submitting" ? 0.7 : 1 }}
                         onClick={submitDemo}
                         type="button"
                         disabled={formStatus === "submitting"}
                       >
-                        {formStatus === "submitting" ? "Sending…" : "Request My Free Demo"}
+                        {formStatus === "submitting" ? (
+                          <>Sending…</>
+                        ) : (
+                          <>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                              <line x1="16" y1="2" x2="16" y2="6"/>
+                              <line x1="8" y1="2" x2="8" y2="6"/>
+                              <line x1="3" y1="10" x2="21" y2="10"/>
+                            </svg>
+                            Request My Free Demo
+                          </>
+                        )}
                       </button>
                     </>
                   )}
