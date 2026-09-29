@@ -2659,3 +2659,31 @@
   .footer-grid { grid-template-columns: 1fr; }
   .pricing-card { padding: 24px 16px; }
 }
+
+/* Sticky Book a Demo button */
+.sticky-demo-bar {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+.sticky-demo-btn {
+  box-shadow: 0 4px 20px rgba(251, 44, 54, 0.3);
+}
+
+@media (max-width: 768px) {
+  .sticky-demo-bar {
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
+    background: #FFFFFF;
+    box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08);
+  }
+
+  .sticky-demo-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

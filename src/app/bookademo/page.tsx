@@ -1153,13 +1153,8 @@ export default function BookADemoPage() {
         </section>
 
         {/* STICKY DEMO BUTTON */}
-        <div style={{
-          position: "fixed",
-          bottom: 20,
-          right: 20,
-          zIndex: 1000,
-        }}>
-          <a href="https://calendly.com/queuetoken/book-a-demo" target="_blank" rel="noopener noreferrer" className="btn btn-primary btn-lg" style={{ display: "inline-flex", alignItems: "center", gap: "8px", boxShadow: "0 4px 20px rgba(251,44,54,0.3)" }}>
+        <div className="sticky-demo-bar">
+          <a href="https://calendly.com/queuetoken/book-a-demo" target="_blank" rel="noopener noreferrer" className="btn btn-primary btn-lg sticky-demo-btn">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
               <line x1="16" y1="2" x2="16" y2="6"/>
